@@ -1,7 +1,7 @@
-Starting create-react-app server on port 55617...
-Request starting HTTP/1.1 GET http://localhost:55203/  
+Starting create-react-app server on port 50669...
+Request starting HTTP/1.1 GET http://localhost:50472/  
 Failed to determine the https port for redirect.
-> DailyPlanner.Web@0.1.0 start D:\Projects\DailyPlannerApp\DailyPlanner.Web\ClientApp
+> DailyPlanner.Web@0.1.0 start D:\Projects\DailyPlannerApplication\DailyPlanner.Web\ClientApp
 > rimraf ./build && react-scripts start
 
 Starting the development server...
@@ -14,51 +14,25 @@ Compiled with warnings.
 
 ./src/components/EventComponents/EventList.js
 
-Request finished in 22020.0417ms 304 
-Request starting HTTP/1.1 GET http://localhost:55203/static/js/bundle.js  
-Request finished in 152.0848ms 304 
-Request starting HTTP/1.1 GET http://localhost:55203/static/media/glyphicons-halflings-regular.448c34a5.woff2  
-Request finished in 9.7109ms 304 
-Request starting HTTP/1.1 GET http://localhost:55203/sockjs-node/info?t=1557733954766  
-Request finished in 16.1897ms 200 application/json; charset=UTF-8
-Request starting HTTP/1.1 GET http://localhost:55203/sockjs-node/376/vkgnr3bk/websocket  
-Request starting HTTP/1.1 GET http://localhost:55203/manifest.json  
-Request finished in 14.341ms 304 
-Request starting HTTP/1.1 POST http://localhost:55203/sockjs-node/376/2bsnp0by/xhr_streaming?t=1557733955571  0
-Request finished in 1224.6003ms 101 
-Request starting HTTP/1.1 GET http://localhost:55203/api/user/getAllUsers  
+Request finished in 31555.6392ms 200 text/html; charset=UTF-8
+Request starting HTTP/1.1 GET http://localhost:50472/static/js/bundle.js  
+Request finished in 887.1259ms 200 application/javascript; charset=UTF-8
+Request starting HTTP/1.1 GET http://localhost:50472/static/media/glyphicons-halflings-regular.448c34a5.woff2  
+Request finished in 11.4126ms 200 font/woff2; charset=UTF-8
+Request starting HTTP/1.1 GET http://localhost:50472/sockjs-node/info?t=1557749222405  
+Request finished in 10.5959ms 200 application/json; charset=UTF-8
+Request starting HTTP/1.1 GET http://localhost:50472/sockjs-node/819/iq031mt3/websocket  
+Request starting HTTP/1.1 GET http://localhost:50472/manifest.json  
+Request finished in 12.2643ms 200 application/json; charset=UTF-8
+Request starting HTTP/1.1 GET http://localhost:50472/favicon.ico  
+Request finished in 12.2581ms 200 image/x-icon
+Request starting HTTP/1.1 POST http://localhost:50472/sockjs-node/819/54vh0c2n/xhr_streaming?t=1557749223299  0
+Request finished in 1172.5742ms 101 
+Request starting HTTP/1.1 GET http://localhost:50472/api/user/getAllUsers  
 Route matched with {action = "GetAllUsers", controller = "User", page = ""}. Executing action DailyPlanner.Web.Controllers.UserController.GetAllUsers (DailyPlanner.Web)
 Executing action method DailyPlanner.Web.Controllers.UserController.GetAllUsers (DailyPlanner.Web) - Validation state: Valid
-Executed action method DailyPlanner.Web.Controllers.UserController.GetAllUsers (DailyPlanner.Web), returned result Microsoft.AspNetCore.Mvc.ObjectResult in 4242.2031ms.
+Executed action method DailyPlanner.Web.Controllers.UserController.GetAllUsers (DailyPlanner.Web), returned result Microsoft.AspNetCore.Mvc.ObjectResult in 4096.7776ms.
 Executing ObjectResult, writing value of type 'System.Collections.Generic.List`1[[DailyPlanner.DomainClasses.UserDTO, DailyPlanner.DomainClasses, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
-Executed action DailyPlanner.Web.Controllers.UserController.GetAllUsers (DailyPlanner.Web) in 4356.0901ms
-Request finished in 4405.5847ms 200 application/json; charset=utf-8
-Request starting HTTP/1.1 GET http://localhost:55203/api/user/edit/529f6800-92cc-48a1-aafb-9a31b9513d9d  
-Route matched with {action = "Edit", controller = "User", page = ""}. Executing action DailyPlanner.Web.Controllers.UserController.Edit (DailyPlanner.Web)
-Executing action method DailyPlanner.Web.Controllers.UserController.Edit (DailyPlanner.Web) with arguments (529f6800-92cc-48a1-aafb-9a31b9513d9d) - Validation state: Valid
-Executed action method DailyPlanner.Web.Controllers.UserController.Edit (DailyPlanner.Web), returned result Microsoft.AspNetCore.Mvc.ObjectResult in 273.0337ms.
-Executing ObjectResult, writing value of type 'DailyPlanner.DomainClasses.UserDTO'.
-Executed action DailyPlanner.Web.Controllers.UserController.Edit (DailyPlanner.Web) in 303.6777ms
-Request finished in 338.5062ms 200 application/json; charset=utf-8
-Request starting HTTP/1.1 GET http://localhost:55203/api/user/getAllUsers  
-Route matched with {action = "GetAllUsers", controller = "User", page = ""}. Executing action DailyPlanner.Web.Controllers.UserController.GetAllUsers (DailyPlanner.Web)
-Executing action method DailyPlanner.Web.Controllers.UserController.GetAllUsers (DailyPlanner.Web) - Validation state: Valid
-Executed action method DailyPlanner.Web.Controllers.UserController.GetAllUsers (DailyPlanner.Web), returned result Microsoft.AspNetCore.Mvc.ObjectResult in 91.2824ms.
-Executing ObjectResult, writing value of type 'System.Collections.Generic.List`1[[DailyPlanner.DomainClasses.UserDTO, DailyPlanner.DomainClasses, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
-Executed action DailyPlanner.Web.Controllers.UserController.GetAllUsers (DailyPlanner.Web) in 102.246ms
-Request finished in 117.0255ms 200 application/json; charset=utf-8
-Request starting HTTP/1.1 GET http://localhost:55203/api/user/getAllUsers  
-Route matched with {action = "GetAllUsers", controller = "User", page = ""}. Executing action DailyPlanner.Web.Controllers.UserController.GetAllUsers (DailyPlanner.Web)
-Executing action method DailyPlanner.Web.Controllers.UserController.GetAllUsers (DailyPlanner.Web) - Validation state: Valid
-Executed action method DailyPlanner.Web.Controllers.UserController.GetAllUsers (DailyPlanner.Web), returned result Microsoft.AspNetCore.Mvc.ObjectResult in 88.3916ms.
-Executing ObjectResult, writing value of type 'System.Collections.Generic.List`1[[DailyPlanner.DomainClasses.UserDTO, DailyPlanner.DomainClasses, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
-Executed action DailyPlanner.Web.Controllers.UserController.GetAllUsers (DailyPlanner.Web) in 98.7354ms
-Request finished in 110.5534ms 200 application/json; charset=utf-8
-Request starting HTTP/1.1 DELETE http://localhost:55203/api/user/delete/50753d24-b40a-4131-95b1-9992ac0b8d03  
-Route matched with {action = "Delete", controller = "User", page = ""}. Executing action DailyPlanner.Web.Controllers.UserController.Delete (DailyPlanner.Web)
-Executing action method DailyPlanner.Web.Controllers.UserController.Delete (DailyPlanner.Web) with arguments (50753d24-b40a-4131-95b1-9992ac0b8d03) - Validation state: Valid
-Error in Delete method: Error converting value 5 to type 'DailyPlanner.DomainClasses.Models.User'. Path '', line 1, position 1.
-Executed action method DailyPlanner.Web.Controllers.UserController.Delete (DailyPlanner.Web), returned result Microsoft.AspNetCore.Mvc.OkResult in 323.5801ms.
-Executing HttpStatusCodeResult, setting HTTP status code 200
-Executed action DailyPlanner.Web.Controllers.UserController.Delete (DailyPlanner.Web) in 335.1717ms
-Request finished in 355.1691ms 200 
+Executed action DailyPlanner.Web.Controllers.UserController.GetAllUsers (DailyPlanner.Web) in 4307.6814ms
+Request finished in 4385.8156ms 200 application/json; charset=utf-8
+Request finished in 50031.8794ms 200 application/javascript; charset=UTF-8

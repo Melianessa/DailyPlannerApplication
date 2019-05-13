@@ -7,8 +7,8 @@ namespace DailyPlanner.Web
 {
     public class APIHelper
     {
-        //private string _apiBaseURI = "https://dailyplannerapi.azurewebsites.net";
-        private string _apiBaseURI = "http://localhost:64629";
+        private string _apiBaseURI = "https://dailyplannerapi.azurewebsites.net";
+        //private string _apiBaseURI = "http://localhost:64629";
         public HttpClient InitializeClient()
         {
             var client = new HttpClient
