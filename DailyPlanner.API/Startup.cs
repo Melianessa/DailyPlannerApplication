@@ -23,6 +23,13 @@ namespace DailyPlanner.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication("Bearer")
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = "http://localhost:5000";
+                    options.RequireHttpsMetadata = false;
+                    options.ApiName = "DailyPlanner.API";
+                });
             services.AddScoped<IDataRepository<User>, UserRepository>();
             services.AddScoped<IDataRepository<Event>, EventRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
@@ -30,7 +37,7 @@ namespace DailyPlanner.API
             services.AddScoped<DbContext, PlannerDbContext>();
             services.AddDbContext<PlannerDbContext>(opts =>
                 opts.UseSqlServer(Configuration["ConnectionString:DailyPlannerDB"]));
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvcCore().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonFormatters().AddAuthorization();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +53,7 @@ namespace DailyPlanner.API
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             try
             {
                 app.UseMvc(routes =>

@@ -4,11 +4,12 @@ using DailyPlanner.DomainClasses;
 using Microsoft.AspNetCore.Mvc;
 using DailyPlanner.DomainClasses.Interfaces;
 using DailyPlanner.DomainClasses.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DailyPlanner.API.Controllers
 {
     [Route("api/[controller]/[action]")]
-
+    [Authorize]
     public class UserController : ControllerBase
     {
         // GET api/values

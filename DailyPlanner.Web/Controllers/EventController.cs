@@ -5,14 +5,20 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using DailyPlanner.DomainClasses.Models;
+using DailyPlanner.Helpers;
 using DailyPlanner.Web.Filters;
+using IdentityServer4.Extensions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace DailyPlanner.Web.Controllers
 {
+    
     [Route("api/[controller]/[action]")]
+    [Authorize]
     [DailyPlannerExceptionFilter]
     public class EventController : Controller
     {
@@ -34,6 +40,7 @@ namespace DailyPlanner.Web.Controllers
             List<Event> ev = new List<Event>();
             try
             {
+                var id = User.GetId();
                 HttpClient client = _userAPI.InitializeClient();
                 //if (date == null)
                 //{

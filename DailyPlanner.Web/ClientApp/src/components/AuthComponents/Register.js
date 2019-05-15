@@ -12,7 +12,7 @@ export class Register extends Component {
         super(props);
         this.state = {
             user: [],
-            login: "",
+            email: "",
             password: "",
             confirmPassword: "",
             loading: false
@@ -26,15 +26,32 @@ export class Register extends Component {
     handleCancel() {
         return;
     }
-    renderRegisterForm() {
+    handleClick() {
+        let body = {
+            Email: this.state.user.email,
+            Password: this.state.user.password
+        }
+        fetch("api/account/register",
+                {
+                    method: "POST",
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(body)
+                })//.then(NotificationManager.success('Success message', 'Event successfully added!', 3000))
+            .then(this.setState({ redirect: true }));
+
+    }
+    renderRegisterForm(user) {
         return <div>
             <div className="form-group row">
                 <label className=" control-label col-md-12">Login:</label>
                 <div className="col-md-4">
                     <input className="form-control"
                         type="text"
-                        value={this.state.login}
-                        onChange={this.handleChange.bind(this, "login")} />
+                        value={user.email}
+                        onChange={this.handleChange.bind(this, "email")} />
                 </div>
             </div>
             <div className="form-group row">
@@ -42,7 +59,7 @@ export class Register extends Component {
                 <div className="col-md-4">
                     <input className="form-control"
                         type="password"
-                        value={this.state.password}
+                        value={user.password}
                         onChange={this.handleChange.bind(this, "password")} />
                 </div>
             </div>
@@ -51,7 +68,7 @@ export class Register extends Component {
                 <div className="col-md-4">
                     <input className="form-control"
                         type="password"
-                        value={this.state.confirmPassword}
+                        value={user.confirmPassword}
                         onChange={this.handleChange.bind(this, "confirmPassword")} />
                 </div>
             </div>
@@ -65,7 +82,7 @@ export class Register extends Component {
     render() {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
-            : this.renderRegisterForm();
+            : this.renderRegisterForm(this.state.user);
         return (
             <div>
                 <h1>Registration form</h1>

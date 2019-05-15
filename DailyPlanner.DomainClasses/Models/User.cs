@@ -18,6 +18,7 @@ namespace DailyPlanner.DomainClasses.Models
         public string Email { get; set; }
         public bool Sex { get; set; }
         public bool IsActive { get; set; }
+        public string Password { get; set; }
         public RoleEnum Role { get; set; }
         public ICollection<Event> Events { get; set; }
     }

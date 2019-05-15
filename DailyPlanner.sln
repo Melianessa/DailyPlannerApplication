@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28729.10
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DailyPlanner.Repository", "Repository\DailyPlanner.Repository.csproj", "{DC657BE5-347A-4E54-A250-7453E9F28F3F}"
 EndProject
@@ -12,6 +12,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DailyPlanner.Test", "DailyPlanner.Test\DailyPlanner.Test.csproj", "{99F3D150-281F-4177-9026-86E6230F5763}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DailyPlanner.DomainClasses", "DailyPlanner.DomainClasses\DailyPlanner.DomainClasses.csproj", "{DA7177F0-8336-4804-B5CC-9FE1E2438A4F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DailyPlanner.Identity", "DailyPlanner.Identity\DailyPlanner.Identity.csproj", "{180B09F1-320B-4868-B1A6-ABE64FE213A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DailyPlanner.Utils", "DailyPlanner.Utils\DailyPlanner.Utils.csproj", "{C1B6912D-8313-445D-B122-2D028520CB9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DailyPlanner.Helpers", "DailyPlanner.Helpers\DailyPlanner.Helpers.csproj", "{5E83EB6A-D765-4C01-AC87-71D6590CCE01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +45,18 @@ Global
 		{DA7177F0-8336-4804-B5CC-9FE1E2438A4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA7177F0-8336-4804-B5CC-9FE1E2438A4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA7177F0-8336-4804-B5CC-9FE1E2438A4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{180B09F1-320B-4868-B1A6-ABE64FE213A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{180B09F1-320B-4868-B1A6-ABE64FE213A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{180B09F1-320B-4868-B1A6-ABE64FE213A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{180B09F1-320B-4868-B1A6-ABE64FE213A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1B6912D-8313-445D-B122-2D028520CB9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1B6912D-8313-445D-B122-2D028520CB9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1B6912D-8313-445D-B122-2D028520CB9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1B6912D-8313-445D-B122-2D028520CB9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E83EB6A-D765-4C01-AC87-71D6590CCE01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E83EB6A-D765-4C01-AC87-71D6590CCE01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E83EB6A-D765-4C01-AC87-71D6590CCE01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E83EB6A-D765-4C01-AC87-71D6590CCE01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
