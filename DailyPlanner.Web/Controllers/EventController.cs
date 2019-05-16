@@ -18,7 +18,6 @@ namespace DailyPlanner.Web.Controllers
 {
     
     [Route("api/[controller]/[action]")]
-    [Authorize]
     [DailyPlannerExceptionFilter]
     public class EventController : Controller
     {

@@ -1,5 +1,4 @@
 ﻿using DailyPlanner.DomainClasses.Models;
-using IdentityServer4.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DailyPlanner.Repository

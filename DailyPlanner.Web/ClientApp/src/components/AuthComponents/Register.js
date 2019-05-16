@@ -17,6 +17,8 @@ export class Register extends Component {
             confirmPassword: "",
             loading: false
         }
+        this.handleClick = this.handleClick.bind(this);
+        this.handleCancel = this.handleCancel.bind(this);
     }
     handleChange(propertyName, event) {
         const user = this.state.user;
@@ -31,7 +33,7 @@ export class Register extends Component {
             Email: this.state.user.email,
             Password: this.state.user.password
         }
-        fetch("api/account/register",
+        fetch("account/register",
                 {
                     method: "POST",
                     headers: {

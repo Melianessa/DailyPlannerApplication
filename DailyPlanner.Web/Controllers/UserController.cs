@@ -8,7 +8,6 @@ using AutoMapper;
 using DailyPlanner.DomainClasses;
 using DailyPlanner.DomainClasses.Models;
 using DailyPlanner.Web.Filters;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -16,7 +15,6 @@ using Newtonsoft.Json;
 namespace DailyPlanner.Web.Controllers
 {
     [Route("api/[controller]/[action]")]
-    //[Authorize]
     public class UserController : Controller
     {
         APIHelper _userAPI = new APIHelper();

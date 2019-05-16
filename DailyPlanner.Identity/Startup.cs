@@ -1,27 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using DailyPlanner.Identity.Overrides;
 using DailyPlanner.Identity.Repositories;
 using DailyPlanner.Repository;
 using IdentityServer4;
-using IdentityServer4.AspNetIdentity;
 using IdentityServer4.Models;
-using IdentityServer4.Stores;
 using IdentityServer4.Validation;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace DailyPlanner.Identity

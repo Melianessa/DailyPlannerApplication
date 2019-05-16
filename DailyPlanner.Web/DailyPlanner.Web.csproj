@@ -40,6 +40,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DailyPlanner.Helpers\DailyPlanner.Helpers.csproj" />
+    <ProjectReference Include="..\DailyPlanner.Identity\DailyPlanner.Identity.csproj" />
     <ProjectReference Include="..\Repository\DailyPlanner.Repository.csproj" />
   </ItemGroup>
 

@@ -20,7 +20,7 @@ namespace DailyPlanner.Identity.Controllers
     }
 
     //[Authorize]
-    [Route("api/[controller]/[action]")]
+    [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
         private readonly IServiceProvider _svcprov;
