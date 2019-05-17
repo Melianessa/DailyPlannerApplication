@@ -18,7 +18,15 @@ export class UserList extends Component {
         this.helperDelete = this.helperDelete.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
         this.renderUser = this.renderUser.bind(this);
-        fetch("api/user/getAllUsers")
+        fetch("api/user/getAllUsers",
+            {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${window.token}`
+                }
+            })
             .then(response => {
                 const json = response.json();
                 return json;

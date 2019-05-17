@@ -31,21 +31,16 @@ export class EditEvent extends Component {
         fetch("api/event/edit/" + id)
             .then(response => {
                 const json = response.json();
-                console.log(json);
                 return json;
             }).then(data => {
-                console.log(data.startDate);
-                console.log(this.state.event);
                 let startMinutes = new Date(data.startDate).setMinutes(new Date(data.startDate).getMinutes() - this.state.offset);
                 let endMinutes = new Date(data.endDate).setMinutes(new Date(data.endDate).getMinutes() - this.state.offset);
                 data.startDate = new Date(startMinutes).toISOString();
                 data.endDate = new Date(endMinutes).toISOString();
-                console.log(data.startDate);
                 this.setState({
                     event: data, loading: false, selectedType: data.type
                 });
-                console.log(this.state.event);
-            });
+                });
     }
     handleChange(propertyName, e) {
         const event = this.state.event;
@@ -55,7 +50,8 @@ export class EditEvent extends Component {
             event[propertyName] = e.target.value;
         }
         if (propertyName === "type") {
-            this.state.selectedType = e.target.value;
+            this.setState({ selectedType : e.target.value});
+	        //this.state.selectedType = e.target.value;
         }
         this.setState({ event: event });
     }
@@ -78,12 +74,8 @@ export class EditEvent extends Component {
                     body: JSON.stringify(body)
                 }).then((response) => response.json())
             .then(data => {
-
-                console.log(data);
-                console.log(this.state.event);
                 this.setState({ event: data, redirect: true });
-                console.log(this.state.event);
-            });
+                });
     }
     handleCancel() {
         this.props.history.push("/event/list");
@@ -170,7 +162,6 @@ export class EditEvent extends Component {
             <div>
                 <h1>Edit event</h1>
                 <p>Edit the following fields.</p>
-
                 {contents}
             </div>
         );

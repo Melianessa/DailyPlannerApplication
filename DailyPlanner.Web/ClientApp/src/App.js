@@ -26,7 +26,8 @@ export default class App extends Component {
                 <Route path='/event/edit/:id' component={EditEvent} />
                 <Route path='/user/edit/:id' component={EditUser} />
                 <Route path='/login' component={Login} />
-                <Route path='/register' component={Register} />
+                <Route path='/account/register' component={Register} />
+                <Route path='/account/login' component={Login} />
                 <Route path='/swagger' component={() => { window.location = '/swagger'; return null; }} />
             </Layout>
 		);

@@ -11,7 +11,7 @@ namespace DailyPlanner.Repository
     public class UserRepository : IUserRepository
     {
         private readonly PlannerDbContext _context;
-
+        //private static readonly char[] charsToTrim = {' '};
         public UserRepository(PlannerDbContext context)
         {
             _context = context;
@@ -42,12 +42,12 @@ namespace DailyPlanner.Repository
             var user = _context.Users.Find(b.Id);
             if (user != null)
             {
-                user.FirstName = b.FirstName;
-                user.LastName = b.LastName;
+                user.FirstName = b.FirstName.Trim();
+                user.LastName = b.LastName.Trim();
                 user.DateOfBirth = b.DateOfBirth;
-                user.Email = b.Email;
+                user.Email = b.Email.Trim();
                 user.Sex = b.Sex;
-                user.Phone = b.Phone;
+                user.Phone = b.Phone.Trim();
                 user.Role = b.Role;
                 user.IsActive = b.IsActive;
             }

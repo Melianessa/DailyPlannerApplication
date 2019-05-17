@@ -55,10 +55,12 @@ export class EditUser extends Component {
             user[propertyName] = event.target.value;
         }
         if (propertyName === "sex") {
-            this.state.selectedSex = event.target.value;
+            this.setState({ selectedSex : event.target.value });
+	        //this.state.selectedSex = event.target.value;
         }
         if (propertyName === "role") {
-            this.state.selectedRole = event.target.value;
+            this.setState({ selectedRole: event.target.value });
+	        //this.state.selectedRole = event.target.value;
         }
         this.setState({ user: user });
     }

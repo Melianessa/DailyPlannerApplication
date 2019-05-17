@@ -6,14 +6,12 @@ using System.Threading.Tasks;
 
 namespace DailyPlanner.Identity.Models
 {
-    public class UserRegisterModel
+    public class UserRegisterModel : UserLoginModel
     {
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+        public string FirstName { get; set; }
         [Required]
-        [MinLength(6)]
-        [MaxLength(256)]
-        public string Password { get; set; }
+        public string LastName { get; set; }
+
     }
 }

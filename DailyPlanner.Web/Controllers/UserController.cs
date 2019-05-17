@@ -4,10 +4,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using AutoMapper;
 using DailyPlanner.DomainClasses;
 using DailyPlanner.DomainClasses.Models;
 using DailyPlanner.Web.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -15,16 +15,15 @@ using Newtonsoft.Json;
 namespace DailyPlanner.Web.Controllers
 {
     [Route("api/[controller]/[action]")]
+    //[Authorize]
     public class UserController : Controller
     {
         APIHelper _userAPI = new APIHelper();
         private readonly ILogger _logger;
-        private readonly IMapper _mapper;
 
-        public UserController(ILogger<UserController> logger, IMapper mapper)
+        public UserController(ILogger<UserController> logger)
         {
             _logger = logger;
-            _mapper = mapper;
         }
         /// <summary>
         /// Get all Users.

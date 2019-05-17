@@ -35,15 +35,18 @@ namespace DailyPlanner.Identity.Controllers
             try
             {
                 var userRep = _svcprov.GetRequiredService<UserAuthRepository>();
-                var user = await userRep.FindById(model.Email);
+                var user = await userRep.FindById(model.Username);
                 if (user == null)
                 {
                     user = new User
                     {
                         Id = Guid.NewGuid(),
                         IsActive = true,
-                        Email = model.Email,
-                        Password = PasswordsHelper.CreateHash(model.Password)
+                        Email = model.Username,
+                        Password = PasswordsHelper.CreateHash(model.Password),
+                        CreationDate = DateTime.UtcNow,
+                        FirstName = model.FirstName,
+                        LastName = model.LastName
                     };
 
                     await userRep.Add(user);

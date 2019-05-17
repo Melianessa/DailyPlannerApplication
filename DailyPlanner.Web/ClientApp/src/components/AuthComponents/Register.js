@@ -4,6 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../NavMenu.css";
 import "../style.css";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import { NotificationContainer, NotificationManager } from "react-notifications";
 
 
 export class Register extends Component {
@@ -14,8 +15,13 @@ export class Register extends Component {
             user: [],
             email: "",
             password: "",
+            firstName: "",
+            lastName: "",
             confirmPassword: "",
-            loading: false
+            loading: false,
+            isSuccess: false,
+            redirect: false,
+            isValid: true
         }
         this.handleClick = this.handleClick.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
@@ -29,11 +35,28 @@ export class Register extends Component {
         return;
     }
     handleClick() {
-        let body = {
-            Email: this.state.user.email,
-            Password: this.state.user.password
+        const { password, confirmPassword, email} = this.state.user;
+        if (!email.includes("@")||!email.includes(".")) {
+	        NotificationManager.error("Error message",
+		        `Email is invalid`,
+		        2000);
         }
-        fetch("account/register",
+        if (password !== confirmPassword) {
+	        this.setState({ isValid: false });
+            NotificationManager.error("Error message",
+                `Passwords don't match`,
+                2000);
+        } else if (password.length < 6) {
+            NotificationManager.error("Error message",
+                `Password should be a minimun of six (6) characters in length`, 2500);
+        } else {
+            let body = {
+                Username: this.state.user.email,
+                Password: this.state.user.password,
+                FirstName: this.state.user.firstName,
+                LastName: this.state.user.lastName
+            }
+            fetch("api/account/register",
                 {
                     method: "POST",
                     headers: {
@@ -41,17 +64,52 @@ export class Register extends Component {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify(body)
-                })//.then(NotificationManager.success('Success message', 'Event successfully added!', 3000))
-            .then(this.setState({ redirect: true }));
-
+                }).then(response => {
+                    const json = response.json();
+                    console.log(json);
+                    return json;
+                }).then(data => {
+                    console.log(data);
+                    console.log(this.state.user);
+                    this.setState({
+                        isSuccess: data.isSuccess
+                    });
+                    if (this.state.isSuccess) {
+                        this.setState({ redirect: true });
+                    }
+                });
+        }
+    }
+    renderRedirect() {
+        if (this.state.redirect) {
+            this.props.history.push("/user/list");
+        }
     }
     renderRegisterForm(user) {
         return <div>
             <div className="form-group row">
-                <label className=" control-label col-md-12">Login:</label>
+                <label className=" control-label col-md-12">First Name:</label>
                 <div className="col-md-4">
                     <input className="form-control"
                         type="text"
+                        value={user.firstName}
+                        onChange={this.handleChange.bind(this, "firstName")} />
+                </div>
+            </div>
+            <div className="form-group row">
+                <label className=" control-label col-md-12">Last Name:</label>
+                <div className="col-md-4">
+                    <input className="form-control"
+                        type="text"
+                        value={user.lastName}
+                        onChange={this.handleChange.bind(this, "lastName")} />
+                </div>
+            </div>
+            <div className="form-group row">
+                <label className=" control-label col-md-12">Email:</label>
+                <div className="col-md-4">
+                    <input className="form-control"
+                        type="email"
                         value={user.email}
                         onChange={this.handleChange.bind(this, "email")} />
                 </div>
@@ -67,6 +125,7 @@ export class Register extends Component {
             </div>
             <div className="form-group row">
                 <label className=" control-label col-md-12">Confirm password:</label>
+
                 <div className="col-md-4">
                     <input className="form-control"
                         type="password"
@@ -78,7 +137,7 @@ export class Register extends Component {
                 <button className="btn btn-success" onClick={this.handleClick}>Save</button>
                 <button className="btn btn-danger" onClick={this.handleCancel.bind(this)}>Cancel</button>
             </div>
-
+            {this.renderRedirect()}
         </div>;
     }
     render() {
@@ -88,8 +147,8 @@ export class Register extends Component {
         return (
             <div>
                 <h1>Registration form</h1>
-
                 {contents}
+                <NotificationContainer />
             </div>
         );
     }

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace DailyPlanner.API.Controllers
 {
     [Route("api/[controller]/[action]")]
-    //[Authorize]
+    [Authorize]
     public class UserController : ControllerBase
     {
         // GET api/values

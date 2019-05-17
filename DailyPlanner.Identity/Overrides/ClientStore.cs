@@ -3,7 +3,6 @@ using DailyPlanner.Identity.Repositories;
 using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Stores;
-using Microsoft.Extensions.Logging;
 
 namespace DailyPlanner.Identity.Overrides
 {
@@ -31,6 +30,7 @@ namespace DailyPlanner.Identity.Overrides
                 AllowedScopes =
                 {
                     "DailyPlanner.API",
+                    "DailyPlanner.Web",
                     IdentityServerConstants.StandardScopes.Profile,
                     IdentityServerConstants.StandardScopes.Phone,
                     IdentityServerConstants.StandardScopes.OpenId,

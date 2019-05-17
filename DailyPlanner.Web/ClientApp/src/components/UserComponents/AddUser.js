@@ -56,7 +56,7 @@ export class AddUser extends Component {
         this.setState({ selectedRole: newRole });
     }
     handleClick() {
-        let body = {
+	    let body = {
             FirstName: this.state.firstName,
             LastName: this.state.lastName,
             DateOfBirth: this.state.dateOfBirth,
@@ -184,7 +184,6 @@ export class AddUser extends Component {
             <div>
                 <h1>Create user</h1>
                 <p>Complete the following fields.</p>
-
                 {contents}
             </div>
         );

@@ -16,6 +16,7 @@ export class Login extends Component {
             password: "",
             loading: false
         }
+        this.handleClick = this.handleClick.bind(this);
     }
     handleChange(propertyName, event) {
         const user = this.state.user;
@@ -25,14 +26,34 @@ export class Login extends Component {
     handleCancel() {
         return;
     }
-    renderLoginForm() {
+    handleClick() {
+        let body = {
+            Username: this.state.user.login,
+            Password: this.state.user.password
+        }
+        fetch("api/account/login",
+            {
+                method: "POST",
+                headers: {
+	                "Accept": "application/json",
+	                "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            }).then(response => {
+                const json = response.json();
+                return json;
+            }).then(data => {
+	        window.token = data;
+        });
+    }
+    renderLoginForm(user) {
         return <div>
             <div className="form-group row">
                 <label className=" control-label col-md-12">Login:</label>
                 <div className="col-md-4">
                     <input className="form-control"
-                        type="text"
-                        value={this.state.login}
+                        type="email"
+                        value={user.login}
                         onChange={this.handleChange.bind(this, "login")} />
                 </div>
             </div>
@@ -41,7 +62,7 @@ export class Login extends Component {
                 <div className="col-md-4">
                     <input className="form-control"
                         type="password"
-                        value={this.state.password}
+                        value={user.password}
                         onChange={this.handleChange.bind(this, "password")} />
                 </div>
             </div>
@@ -55,11 +76,10 @@ export class Login extends Component {
     render() {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
-            : this.renderLoginForm();
+            : this.renderLoginForm(this.state.user);
         return (
             <div>
                 <h1>Login</h1>
-
                 {contents}
             </div>
         );

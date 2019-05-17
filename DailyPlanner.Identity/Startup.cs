@@ -90,6 +90,17 @@ namespace DailyPlanner.Identity
                             new Scope(IdentityServerConstants.StandardScopes.Phone),
                             new Scope(IdentityServerConstants.StandardScopes.OpenId)
                         }
+                    },
+                    new ApiResource("DailyPlanner.Web", "Daily Planner")
+                    {
+                        Scopes = new[]
+                        {
+                            new Scope("DailyPlanner.Web", "Daily Planner"),
+                            new Scope(IdentityServerConstants.StandardScopes.Email),
+                            new Scope(IdentityServerConstants.StandardScopes.Profile),
+                            new Scope(IdentityServerConstants.StandardScopes.Phone),
+                            new Scope(IdentityServerConstants.StandardScopes.OpenId)
+                        }
                     }
                 })
                 .AddProfileService<ProfileService>()
