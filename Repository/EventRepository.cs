@@ -36,9 +36,11 @@ namespace DailyPlanner.Repository
 
         public Guid Add(Event b)
         {
+            //var id = User.GetId();
             b.Id = Guid.NewGuid();
             b.CreationDate = DateTime.UtcNow;
             b.IsActive = true;
+            //b.User = _context.Users.FirstOrDefault(p => p.Id == id);
             _context.Events.Add(b);
             _context.SaveChanges();
             return b.Id;

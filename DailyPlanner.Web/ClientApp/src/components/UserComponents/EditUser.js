@@ -33,7 +33,15 @@ export class EditUser extends Component {
         this.startPage(this.props.match.params.id);
     }
     startPage(id) {
-        fetch("api/user/edit/" + id)
+        fetch("api/user/edit/" + id,
+            {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${window.token}`
+                }
+            })
             .then(response => {
                 const json = response.json();
                 console.log(json);
@@ -55,12 +63,12 @@ export class EditUser extends Component {
             user[propertyName] = event.target.value;
         }
         if (propertyName === "sex") {
-            this.setState({ selectedSex : event.target.value });
-	        //this.state.selectedSex = event.target.value;
+            this.setState({ selectedSex: event.target.value });
+            //this.state.selectedSex = event.target.value;
         }
         if (propertyName === "role") {
             this.setState({ selectedRole: event.target.value });
-	        //this.state.selectedRole = event.target.value;
+            //this.state.selectedRole = event.target.value;
         }
         this.setState({ user: user });
     }
@@ -80,7 +88,8 @@ export class EditUser extends Component {
                 method: "PUT",
                 headers: {
                     "Accept": "application/json",
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${window.token}`
                 },
                 body: JSON.stringify(body)
             }).then((response) => response.json())

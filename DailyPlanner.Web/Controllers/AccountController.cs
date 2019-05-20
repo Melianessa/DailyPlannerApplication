@@ -55,13 +55,15 @@ namespace DailyPlanner.Web.Controllers
             catch (Exception e)
             {
                 _logger.LogWarning($"Error in Register method: {e.Message}");
+                return new Response
+                {
+                    IsSuccess = false
+                };
             }
-
-            return response;
         }
 
         [HttpPost]
-        public async Task<string> Login([FromBody]UserLoginModel model)
+        public async Task<Response> Login([FromBody]UserLoginModel model)
         {
             //Response response = new Response();
             var response = new Dictionary<string, string>();
@@ -89,20 +91,34 @@ namespace DailyPlanner.Web.Controllers
                         var result = await res.Content.ReadAsStringAsync();
                         response = JsonConvert.DeserializeObject<Dictionary<string, string>>(result);
                         token = response.FirstOrDefault(p => p.Key == "access_token").Value;
+                        return new Response()
+                        {
+                            IsSuccess = true,
+                            StatusCode = StatusCodes.Status200OK,
+                            Token = token
+                        };
                     }
-                    if (token == null)
+                    if (token == "")
                     {
                         _logger.LogWarning("Error in Login method, token is NULL");
                     }
                 }
-                return token;
+                return new Response()
+                {
+                    IsSuccess = false,
+                    StatusCode = StatusCodes.Status400BadRequest,
+                };
+
             }
             catch (Exception e)
             {
                 _logger.LogWarning($"Error in Login method: {e.Message}");
+                return new Response()
+                {
+                    IsSuccess = false,
+                    Token = token
+                };
             }
-
-            return token;
         }
     }
 

@@ -59,7 +59,8 @@ export class AddEvent extends Component {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${window.token}`
                 },
                 body: JSON.stringify(body)
             })//.then(NotificationManager.success('Success message', 'Event successfully added!', 3000))

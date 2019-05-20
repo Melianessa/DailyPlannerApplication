@@ -14,7 +14,9 @@ export class Login extends Component {
             user: [],
             login: "",
             password: "",
-            loading: false
+            loading: false,
+            isSuccess: false,
+            redirect: false
         }
         this.handleClick = this.handleClick.bind(this);
     }
@@ -35,16 +37,28 @@ export class Login extends Component {
             {
                 method: "POST",
                 headers: {
-	                "Accept": "application/json",
-	                "Content-Type": "application/json"
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify(body)
             }).then(response => {
                 const json = response.json();
                 return json;
             }).then(data => {
-	        window.token = data;
-        });
+                window.token = data.token;
+                window.login = data.isSuccess;
+                this.setState({
+                    isSuccess: data.isSuccess
+                });
+                if (this.state.isSuccess) {
+                    this.setState({ redirect: true });
+                }
+            });
+    }
+    renderRedirect() {
+        if (this.state.redirect) {
+            this.props.history.push("/user/list");
+        }
     }
     renderLoginForm(user) {
         return <div>
@@ -70,7 +84,7 @@ export class Login extends Component {
                 <button className="btn btn-success" onClick={this.handleClick}>Login</button>
                 <button className="btn btn-danger" onClick={this.handleCancel.bind(this)}>Cancel</button>
             </div>
-
+            {this.renderRedirect()}
         </div>;
     }
     render() {

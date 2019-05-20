@@ -7,17 +7,34 @@ import "./NavMenu.css";
 export class NavMenu extends Component {
     displayName = NavMenu.name
 
+    renderLoginData() {
+        if (true) {
+            return <Nav>
+                <LinkContainer to={"/user/list"}>
+                    <NavItem>
+                        <Glyphicon glyph='user' /> User
+				           </NavItem>
+                </LinkContainer>
+                <LinkContainer to={"/event/list"}>
+                    <NavItem>
+                        <Glyphicon glyph='list-alt' /> Events
+				           </NavItem>
+                </LinkContainer>
+            </Nav>;
+        }
+    }
     render() {
         return (
             <Navbar inverse fixedTop fluid collapseOnSelect>
                 <Navbar.Header>
                     <Navbar.Brand>
                         <Link to={"/"}>Daily Planner</Link>
-                        </Navbar.Brand>
-	                <Navbar.Brand>
-		                <Link to={"/account/login"}>Login</Link>
-	                </Navbar.Brand>
-                    <Navbar.Toggle />
+                    </Navbar.Brand>
+	                <NavItem>
+                        <Link to={"/account/login"}>Login</Link>
+		                <Link to={"/account/register"}>Register</Link>
+                    </NavItem>
+	                <Navbar.Toggle />
                 </Navbar.Header>
                 <Navbar.Collapse>
                     <Nav>
@@ -26,41 +43,21 @@ export class NavMenu extends Component {
                                 <Glyphicon glyph='home' /> Home
               </NavItem>
                         </LinkContainer>
-	                    <LinkContainer to={"/account/register"} exact>
+	                    <LinkContainer to={"/user/list"}>
 		                    <NavItem>
-			                    <Glyphicon glyph='sunglasses' /> Register
-		                    </NavItem>
-                        </LinkContainer>
-	                    <LinkContainer to={"/account/login"} exact>
-		                    <NavItem>
-                                <Glyphicon glyph='ice-lolly-tasted' /> Login
+			                    <Glyphicon glyph='user' /> User
 		                    </NavItem>
 	                    </LinkContainer>
-                        <LinkContainer to={"/user/list"}>
-                            <NavItem>
-                                <Glyphicon glyph='user' /> User
-              </NavItem>
-                        </LinkContainer>
-                        <LinkContainer to={"/event/list"}>
-                            <NavItem>
-                                <Glyphicon glyph='list-alt' /> Events
-              </NavItem>
-                        </LinkContainer>
-                        <LinkContainer to={"/event/create"}>
+	                    <LinkContainer to={"/event/list"}>
 		                    <NavItem>
-                                <Glyphicon glyph='plus-sign' /> Create new event
+			                    <Glyphicon glyph='list-alt' /> Events
 		                    </NavItem>
-                        </LinkContainer>
-	                    <LinkContainer to={"/user/create"}>
-		                    <NavItem>
-                                <Glyphicon glyph='edit' /> Create new user
-		                    </NavItem>
-                        </LinkContainer>
+	                    </LinkContainer>
                         <LinkContainer to={"/swagger"}>
-		                    <NavItem>
+                            <NavItem>
                                 <Glyphicon glyph='eye-open' /> Swagger API
 		                    </NavItem>
-	                    </LinkContainer>
+                        </LinkContainer>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

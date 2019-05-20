@@ -19,5 +19,6 @@ namespace DailyPlanner.DomainClasses.Models
         public bool IsActive { get; set; }
         public EventEnum Type { get; set; }
         public User User { get; set; }
+        public Guid? UserId { get; set; }
     }
 }

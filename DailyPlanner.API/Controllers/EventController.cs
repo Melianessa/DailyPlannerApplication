@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using DailyPlanner.DomainClasses.Interfaces;
 using DailyPlanner.DomainClasses.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DailyPlanner.API.Controllers
 {
     [Route("api/[controller]/[action]")]
-
+    [Authorize]
     public class EventController : ControllerBase
     {
         private readonly IDataRepository<Event> _iRepo;

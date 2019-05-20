@@ -8,6 +8,7 @@ using DailyPlanner.DomainClasses.Models;
 using DailyPlanner.Helpers;
 using DailyPlanner.Web.Filters;
 using IdentityServer4.Extensions;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +20,12 @@ namespace DailyPlanner.Web.Controllers
     
     [Route("api/[controller]/[action]")]
     [DailyPlannerExceptionFilter]
+    //[Authorize]
     public class EventController : Controller
     {
         APIHelper _userAPI = new APIHelper();
         private readonly ILogger _logger;
-
+            
         public EventController(ILogger<EventController> logger)
         {
             _logger = logger;
@@ -51,7 +53,7 @@ namespace DailyPlanner.Web.Controllers
                 if (res.IsSuccessStatusCode)
                 {
                     var result = await res.Content.ReadAsStringAsync();
-                    ev = JsonConvert.DeserializeObject<List<Event>>(result).OrderBy(p => p.StartDate).ToList();
+                    ev = JsonConvert.DeserializeObject<List<Event>>(result).Where(p=>p.Id==id).OrderBy(p => p.StartDate).ToList();
                 }
             }
             catch (Exception e)
@@ -165,7 +167,9 @@ namespace DailyPlanner.Web.Controllers
                 if (ModelState.IsValid)
                 {
                     HttpClient client = _userAPI.InitializeClient();
-
+                    var authId = User.GetId();
+                    ev.User.Id = authId;
+                    
                     var content = new StringContent(JsonConvert.SerializeObject(ev), Encoding.UTF8,
                         "application/json");
                     HttpResponseMessage res = await client.PostAsync("api/event/post", content);

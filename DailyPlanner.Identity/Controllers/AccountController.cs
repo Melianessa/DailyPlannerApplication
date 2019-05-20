@@ -17,6 +17,7 @@ namespace DailyPlanner.Identity.Controllers
         public string ErrorMessage { get; set; }
         public int StatusCode { get; set; }
         public Guid? UserId { get; set; }
+        public string Token { get; set; }
     }
 
     //[Authorize]

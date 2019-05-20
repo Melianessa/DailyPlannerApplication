@@ -71,7 +71,8 @@ export class AddUser extends Component {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${window.token}`
                 },
                 body: JSON.stringify(body)
             })//.then(NotificationManager.success("Success message", "User successfully added!", 3000))

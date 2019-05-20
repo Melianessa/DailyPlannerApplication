@@ -28,13 +28,13 @@ namespace DailyPlanner.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddAuthentication("Bearer")
-            //    .AddIdentityServerAuthentication(options =>
-            //    {
-            //        options.Authority = "http://localhost:5000";
-            //        options.RequireHttpsMetadata = false;
-            //        options.ApiName = "DailyPlanner.Web";
-            //    });
+            services.AddAuthentication("Bearer")
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = "http://localhost:5000";
+                    options.RequireHttpsMetadata = false;
+                    options.ApiName = "DailyPlanner.Web";
+                });
             services.AddAutoMapper();
             services.AddScoped<DailyPlannerExceptionFilterAttribute>();
             // In production, the React files will be served from this directory
@@ -64,7 +64,7 @@ namespace DailyPlanner.Web
             services.AddMvcCore(config =>
                 config.Filters.Add(
                     typeof(DailyPlannerExceptionFilterAttribute
-                    ))); //.AddApiExplorer().AddJsonFormatters().AddAuthorization();
+                    ))).AddApiExplorer().AddJsonFormatters().AddAuthorization();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -89,7 +89,7 @@ namespace DailyPlanner.Web
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseSpaStaticFiles();
-            //app.UseAuthentication();
+            app.UseAuthentication();
             //app.UseMvc(routes =>
             //{
             //    routes.MapRoute(

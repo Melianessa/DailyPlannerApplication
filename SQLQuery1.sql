@@ -8,7 +8,9 @@ insert into Users(Id,FirstName,LastName,DateOfBirth,IsActive,Role,Sex,CreationDa
 insert into Users(Id,FirstName,LastName,DateOfBirth,IsActive,Role,Sex,CreationDate) values ('adfccff1-00a2-4388-8ef4-cdb1b3324d15', 'Barry', 'Allen','1996-04-11 12:00','true',2,'false','2019-04-24 13:00')
 insert into Users(Id,FirstName,LastName,DateOfBirth,IsActive,Role,Sex,CreationDate) values ('b9999c0e-d8e0-4a99-b6e4-0d5b480bf9fd', 'Stefania', 'Beerzy','1996-04-11 12:00','true',2,'false','2019-04-24 13:00')
 insert into Users(Id,FirstName,LastName,DateOfBirth,IsActive,Role,Sex,CreationDate) values ('d196d791-c631-4701-a6bc-a56816d1c3cd', 'Lucy', 'Hopeson','1996-04-11 12:00','true',2,'false','2019-04-24 13:00')
-insert into Events(Id,Title,StartDate,EndDate,CreationDate,IsActive,Type,UserId) values ('488b19ab-a015-4e4c-a3c4-c24e76b94aff', 'Call', '2019-04-17 12:00','2019-04-18 12:00','2019-04-16 12:00','true',1,(select Id from Users where LastName='Some'))
+insert into Events(Id,Title,StartDate,EndDate,CreationDate,IsActive,Type,UserId) values ('498b19ab-a015-4e4c-a3c4-c24e76b94aff', 'Call', '2019-04-17 12:00','2019-05-20 12:00','2019-05-21 12:00','true',1,(select Id from Users where LastName='Some'))
+insert into Events(Id,Title,StartDate,EndDate,CreationDate,IsActive,Type,UserId) values ('498b19ab-a015-4e4c-a3c4-c24e76b94aff', 'Call', '2019-04-17 12:00','2019-05-20 12:00','2019-05-21 12:00','true',1,(select Id from Users where LastName='Test user'))
+
 CREATE TABLE [dbo].[PersistedGrants] (
     [Key]           VARCHAR  NOT NULL PRIMARY KEY,
     [Type]    NVARCHAR (MAX)    NOT NULL,

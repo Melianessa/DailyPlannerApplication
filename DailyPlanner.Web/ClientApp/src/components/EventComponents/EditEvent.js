@@ -28,7 +28,15 @@ export class EditEvent extends Component {
         this.startPage(this.props.match.params.id);
     }
     startPage(id) {
-        fetch("api/event/edit/" + id)
+        fetch("api/event/edit/" + id,
+		        {
+			        method: "GET",
+			        headers: {
+				        "Accept": "application/json",
+				        "Content-Type": "application/json",
+				        "Authorization": `Bearer ${window.token}`
+			        }
+		        })
             .then(response => {
                 const json = response.json();
                 return json;
@@ -69,7 +77,8 @@ export class EditEvent extends Component {
                     method: "PUT",
                     headers: {
                         "Accept": "application/json",
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${window.token}`
                     },
                     body: JSON.stringify(body)
                 }).then((response) => response.json())

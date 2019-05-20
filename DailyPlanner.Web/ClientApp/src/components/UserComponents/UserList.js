@@ -50,7 +50,12 @@ export class UserList extends Component {
     helperDelete(id) {
         fetch("api/user/delete/" + id,
             {
-                method: "DELETE"
+                method: "DELETE",
+                headers: {
+	                "Accept": "application/json",
+	                "Content-Type": "application/json",
+	                "Authorization": `Bearer ${window.token}`
+                }
             })
             .then(this.setState({
                 users: this.state.users.filter((rec) => {

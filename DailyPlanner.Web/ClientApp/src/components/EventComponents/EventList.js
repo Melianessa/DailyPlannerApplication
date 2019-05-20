@@ -31,7 +31,8 @@ export class EventList extends Component {
                 //"Accept": "application/json",
                 //application/x-www-form-urlencoded for methods without [FromBody]
                 //application/json for methods with [FromBody]
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": `Bearer ${window.token}`
             },
             body: new URLSearchParams(reqBody).toString()
         }).then(response => {
@@ -66,7 +67,12 @@ export class EventList extends Component {
     helperDelete(id) {
         fetch("api/event/delete/" + id,
             {
-                method: "DELETE"
+                method: "DELETE",
+                headers: {
+	                "Accept": "application/json",
+	                "Content-Type": "application/json",
+	                "Authorization": `Bearer ${window.token}`
+                }
             })
             .then(this.setState({
                 events: this.state.events.filter((rec) => {
