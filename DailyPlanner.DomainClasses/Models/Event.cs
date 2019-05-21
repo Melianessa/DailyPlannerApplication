@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using DailyPlanner.DomainClasses.Enums;
 using DailyPlanner.DomainClasses.Interfaces;
 
@@ -19,6 +18,5 @@ namespace DailyPlanner.DomainClasses.Models
         public bool IsActive { get; set; }
         public EventEnum Type { get; set; }
         public User User { get; set; }
-        public Guid? UserId { get; set; }
     }
 }

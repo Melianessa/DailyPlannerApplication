@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DailyPlanner.DomainClasses;
 using DailyPlanner.DomainClasses.Interfaces;
 using DailyPlanner.DomainClasses.Models;
 
@@ -34,16 +35,33 @@ namespace DailyPlanner.Repository
             return ev;
         }
 
-        public Guid Add(Event b)
+        public Guid Add(EventDTO ev)
         {
-            //var id = User.GetId();
-            b.Id = Guid.NewGuid();
-            b.CreationDate = DateTime.UtcNow;
-            b.IsActive = true;
-            //b.User = _context.Users.FirstOrDefault(p => p.Id == id);
-            _context.Events.Add(b);
+            var evt = new Event
+            {
+                Id = Guid.NewGuid(),
+                CreationDate = DateTime.UtcNow,
+                IsActive = true,
+                Title = ev.Title,
+                Type = ev.Type,
+                Description = ev.Description,
+                StartDate = ev.StartDate,
+                EndDate = ev.EndDate,
+            };
+            var user = new User
+            {
+                Id = ev.UserId
+            };
+            _context.Users.Attach(user);
+            evt.User = user;
+            return Add(evt);
+        }
+
+        public Guid Add(Event ev)
+        {
+            _context.Events.Add(ev);
             _context.SaveChanges();
-            return b.Id;
+            return ev.Id;
         }
 
         public Event Update(Event b)
@@ -62,14 +80,13 @@ namespace DailyPlanner.Repository
             return b;
         }
 
-        public int Delete(Event b)
+        public void Delete(Event b)
         {
             if (b != null)
             {
                 _context.Events.Remove(b);
             }
             _context.SaveChanges();
-            return _context.Events.Count();
         }
     }
 }

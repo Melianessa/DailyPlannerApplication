@@ -55,16 +55,15 @@ namespace DailyPlanner.Repository
             return b;
         }
 
-        public int Delete(User b)
+        public void Delete(User b)
         {
             if (b != null)
             {
                 _context.Users.Remove(b);
             }
             _context.SaveChanges();
-            return _context.Users.Count();
         }
-        
+
         public IEnumerable<UserDTO> GetAllUsers()
         {
             return _context.Users.Include(p => p.Events).Select(p => new UserDTO(p)).ToList();

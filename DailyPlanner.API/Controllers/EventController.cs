@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DailyPlanner.DomainClasses;
 using DailyPlanner.DomainClasses.Interfaces;
 using DailyPlanner.DomainClasses.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -42,9 +43,9 @@ namespace DailyPlanner.API.Controllers
 
         // POST api/values
         [HttpPost]
-        public Guid Post([FromBody] Event ev)
+        public Guid Post([FromBody] EventDTO ev)
         {
-            return _iRepo.Add(ev);
+            return _iEventRepo.Add(ev);
         }
 
         // PUT api/values/5
@@ -56,9 +57,9 @@ namespace DailyPlanner.API.Controllers
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public int Delete(Event ev)
+        public void Delete(Event ev)
         {
-            return _iRepo.Delete(ev);
+            _iRepo.Delete(ev);
         }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Globalization;
 using System.Linq;
+using DailyPlanner.DomainClasses;
 using DailyPlanner.DomainClasses.Enums;
 using DailyPlanner.DomainClasses.Models;
 using DailyPlanner.Repository;
@@ -60,11 +61,12 @@ namespace DailyPlanner.Test
         public void AddEvent_Test()
         {
             var controller = new EventController(_eventRepository, _eventRepository);
-            var newEvent = new Event() { Id = Guid.NewGuid(), Title = "Concert", Description = "my concert", StartDate = new DateTime(2019, 11, 12, 09, 09, 09), EndDate = new DateTime(2019, 10, 13, 09, 09, 09), Type = EventEnum.Reminder };
+            var newEvent = new EventDTO() { Title = "Concert", Description = "my concert", StartDate = new DateTime(2019, 11, 12, 09, 09, 09), EndDate = new DateTime(2019, 10, 13, 09, 09, 09), Type = EventEnum.Reminder };
             //Act  
-            var data = controller.Post(newEvent);
+            var eventId = controller.Post(newEvent);
+            var ev = _eventRepository.Get(eventId);
             //Assert  
-            Assert.AreEqual(data, newEvent.Id);
+            Assert.AreEqual(ev.Title, newEvent.Title);
         }
         [TestMethod]
         public void UpdateEvent_Test()
@@ -83,9 +85,10 @@ namespace DailyPlanner.Test
             var controller = new EventController(_eventRepository, _eventRepository);
             var firstLength = _events.Length;
             //Act
-            var result = controller.Delete(_events[0]);
+            controller.Delete(_events[0]);
+            var secondLength = controller.GetAll().Count();
             //Assert
-            Assert.AreNotEqual(firstLength,result);
+            Assert.AreNotEqual(firstLength,secondLength);
         }
     }
 }

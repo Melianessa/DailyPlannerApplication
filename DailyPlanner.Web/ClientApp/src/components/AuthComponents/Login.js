@@ -45,7 +45,9 @@ export class Login extends Component {
                 const json = response.json();
                 return json;
             }).then(data => {
-                window.token = data.token;
+                if (data.token) {
+                    window.token = `Bearer ${data.token}`;
+                }
                 window.login = data.isSuccess;
                 this.setState({
                     isSuccess: data.isSuccess

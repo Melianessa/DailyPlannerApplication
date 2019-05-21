@@ -26,7 +26,6 @@ namespace DailyPlanner.Web.Controllers
         [HttpPost]
         public async Task<Response> Register([FromBody] UserRegisterModel model)
         {
-            Response response = new Response();
             try
             {
                 HttpClient client = _apiBaseURI.InitializeClient();
@@ -38,26 +37,34 @@ namespace DailyPlanner.Web.Controllers
                     if (res.IsSuccessStatusCode)
                     {
                         var result = await res.Content.ReadAsStringAsync();
-                        response = JsonConvert.DeserializeObject<Response>(result);
+                        var response = JsonConvert.DeserializeObject<Response>(result);
+                        return response;
                     }
-                    if (response == null)
+                    else
                     {
-                        _logger.LogWarning("Error in Register method, response is NULL");
+                        _logger.LogWarning("Error in Register method, response status code is not success");
                         return new Response
                         {
                             IsSuccess = false,
-                            StatusCode = StatusCodes.Status204NoContent
+                            StatusCode = StatusCodes.Status400BadRequest,
+                            ErrorMessage = "Response status code is not success"
                         };
                     }
                 }
-                return response;
+                return new Response
+                {
+                    IsSuccess = false,
+                    StatusCode = StatusCodes.Status500InternalServerError,
+                    ErrorMessage = "Model is not valid"
+                };
             }
             catch (Exception e)
             {
                 _logger.LogWarning($"Error in Register method: {e.Message}");
                 return new Response
                 {
-                    IsSuccess = false
+                    IsSuccess = false,
+                    ErrorMessage = $"{e.Message}, {e.InnerException.Message}"
                 };
             }
         }
@@ -65,9 +72,6 @@ namespace DailyPlanner.Web.Controllers
         [HttpPost]
         public async Task<Response> Login([FromBody]UserLoginModel model)
         {
-            //Response response = new Response();
-            var response = new Dictionary<string, string>();
-            var token = "";
             try
             {
                 HttpClient client = _apiBaseURI.InitializeClient();
@@ -76,37 +80,49 @@ namespace DailyPlanner.Web.Controllers
                     model.Client_id = model.Username;
                     model.Client_secret = "123456";
                     model.Grant_type = "password";
-                    //var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8,
-                    //    "application/x-www-form-urlencoded");
-                    //content.Headers()
                     var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(JsonConvert.SerializeObject(model));
                     var req = new HttpRequestMessage(HttpMethod.Post, "connect/token")
                     {
                         Content = new FormUrlEncodedContent(dict)
                     };
                     var res = await client.SendAsync(req);
-                    //HttpResponseMessage res = await client.PostAsync("connect/token", content);
                     if (res.IsSuccessStatusCode)
                     {
                         var result = await res.Content.ReadAsStringAsync();
-                        response = JsonConvert.DeserializeObject<Dictionary<string, string>>(result);
-                        token = response.FirstOrDefault(p => p.Key == "access_token").Value;
-                        return new Response()
+                        var response = JsonConvert.DeserializeObject<Dictionary<string, string>>(result);
+                        if (response.ContainsKey("access_token"))
                         {
-                            IsSuccess = true,
-                            StatusCode = StatusCodes.Status200OK,
-                            Token = token
+                            return new Response
+                            {
+                                IsSuccess = true,
+                                StatusCode = StatusCodes.Status200OK,
+                                Token = response["access_token"]
+                            };
+                        }
+                        _logger.LogWarning("Error in Login method, token is NULL");
+                        return new Response
+                        {
+                            IsSuccess = false,
+                            StatusCode = StatusCodes.Status204NoContent,
+                            ErrorMessage = "Token is null"
                         };
                     }
-                    if (token == "")
+                    else
                     {
-                        _logger.LogWarning("Error in Login method, token is NULL");
+                        _logger.LogWarning("Error in Login method, response status code is not success");
+                        return new Response
+                        {
+                            IsSuccess = false,
+                            StatusCode = StatusCodes.Status400BadRequest,
+                            ErrorMessage = "Response status code is not success"
+                        };
                     }
                 }
                 return new Response()
                 {
                     IsSuccess = false,
-                    StatusCode = StatusCodes.Status400BadRequest,
+                    StatusCode = StatusCodes.Status500InternalServerError,
+                    ErrorMessage = "Model is not valid"
                 };
 
             }
@@ -116,7 +132,7 @@ namespace DailyPlanner.Web.Controllers
                 return new Response()
                 {
                     IsSuccess = false,
-                    Token = token
+                    ErrorMessage = $"{e.Message}, {e.InnerException.Message}"
                 };
             }
         }

@@ -60,9 +60,9 @@ namespace DailyPlanner.API.Controllers
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public int Delete(User b)
+        public void Delete(User b)
         {
-            return _iRepo.Delete(b);
+            _iRepo.Delete(b);
         }
     }
 }

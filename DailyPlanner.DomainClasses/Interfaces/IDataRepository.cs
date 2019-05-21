@@ -9,6 +9,6 @@ namespace DailyPlanner.DomainClasses.Interfaces
         TEntity Get(Guid id);
         Guid Add(TEntity b);
         TEntity Update(TEntity b);
-        int Delete(TEntity b);
+        void Delete(TEntity b);
     }
 }

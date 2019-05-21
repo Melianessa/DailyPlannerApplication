@@ -13,7 +13,7 @@ export class UserList extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { users: [], loading: true, activePage: 1, itemsPerPage: 3 };
+        this.state = { users: [], loading: true, activePage: 1, itemsPerPage: 3, status: "" };
         this.handleDelete = this.handleDelete.bind(this);
         this.helperDelete = this.helperDelete.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
@@ -24,15 +24,22 @@ export class UserList extends Component {
                 headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${window.token}`
+                    "Authorization": window.getToken()
                 }
             })
             .then(response => {
-                const json = response.json();
-                return json;
+                console.log(response);
+                if (response.ok) {
+                    return response.json();
+                } else if (response.status === 401) {
+                    this.setState({
+                        status: response.statusText
+                    });
+                }
             }).then(data => {
+                var users = data ? data : [];
                 this.setState({
-                    users: data, loading: false
+                    users: users, loading: false
                 });
                 console.log(this.props.location);
                 if (this.props.location.state && this.props.location.state.actionMessage) {
@@ -86,6 +93,9 @@ export class UserList extends Component {
         this.props.history.push("/user/edit/" + id);
     }
     renderUser(users) {
+        if (!users || users.length === 0) {
+            return this.state.status;
+        }
         return (
             <table className="table table-striped">
                 <thead>

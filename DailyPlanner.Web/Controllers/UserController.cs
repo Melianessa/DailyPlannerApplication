@@ -1,29 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using DailyPlanner.DomainClasses;
 using DailyPlanner.DomainClasses.Models;
+using DailyPlanner.Helpers;
+using DailyPlanner.Identity.Controllers;
 using DailyPlanner.Web.Filters;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace DailyPlanner.Web.Controllers
 {
+    [Authorize]
     [Route("api/[controller]/[action]")]
-    //[Authorize]
     public class UserController : Controller
     {
-        APIHelper _userAPI = new APIHelper();
+        private readonly APIHelper _userAPI;
         private readonly ILogger _logger;
 
-        public UserController(ILogger<UserController> logger)
+        public UserController(ILogger<UserController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _userAPI = new APIHelper(configuration);
         }
         /// <summary>
         /// Get all Users.
@@ -33,45 +40,58 @@ namespace DailyPlanner.Web.Controllers
         [ServiceFilter(typeof(DailyPlannerExceptionFilterAttribute))]
         public async Task<IEnumerable<UserDTO>> GetAllUsers()
         {
-            List<UserDTO> user = new List<UserDTO>();
             try
             {
-                HttpClient client = _userAPI.InitializeClient();
+                string token = HttpContext.Request.Headers["Authorization"];
+                HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
                 HttpResponseMessage res = await client.GetAsync("api/user/getAllUsers");
                 if (res.IsSuccessStatusCode)
                 {
                     var result = await res.Content.ReadAsStringAsync();
-                    user = JsonConvert.DeserializeObject<List<UserDTO>>(result).OrderByDescending(p => p.CreationDate).ToList();
+                    var user = JsonConvert.DeserializeObject<List<UserDTO>>(result).OrderByDescending(p => p.CreationDate).ToList();
+                    return user;
+                }
+                else
+                {
+                    _logger.LogWarning("Error in Get all users method, response status code is not success");
+                    return null;
                 }
             }
             catch (Exception e)
             {
                 _logger.LogWarning($"Error in GetAllUsers method: {e.Message}");
+                return null;
             }
-
-            return user;
         }
-        //[HttpGet]
-        //public async Task<IEnumerable<User>> GetAll()
-        //{
-        //    List<User> user = new List<User>();
-        //    try
-        //    {
-        //        HttpClient client = _userAPI.InitializeClient();
-        //        HttpResponseMessage res = await client.GetAsync("api/user/getAll");
-        //        if (res.IsSuccessStatusCode)
-        //        {
-        //            var result = await res.Content.ReadAsStringAsync();
-        //            user = JsonConvert.DeserializeObject<List<User>>(result).OrderBy(p=>p.CreationDate).ToList();
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogWarning($"Error in GetAll method: {e.Message}");
-        //    }
-
-        //    return user;
-        //}
+        /// <summary>
+        /// Get all Users.
+        /// </summary>
+        /// <returns>A list of users</returns>
+        [HttpGet]
+        public async Task<IEnumerable<User>> GetAll()
+        {
+            try
+            {
+                HttpClient client = _userAPI.InitializeClient();
+                HttpResponseMessage res = await client.GetAsync("api/user/getAll");
+                if (res.IsSuccessStatusCode)
+                {
+                    var result = await res.Content.ReadAsStringAsync();
+                    var user = JsonConvert.DeserializeObject<List<User>>(result).OrderBy(p => p.CreationDate).ToList();
+                    return user;
+                }
+                else
+                {
+                    _logger.LogWarning("Error in Get all users method, response status code is not success");
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning($"Error in GetAll method: {e.Message}");
+                return null;
+            }
+        }
         /// <summary>
         /// Get a specific User.
         /// </summary>
@@ -80,7 +100,6 @@ namespace DailyPlanner.Web.Controllers
         [HttpGet("{id}")]
         public async Task<User> Get(Guid id)
         {
-            User users = new User();
             try
             {
                 HttpClient client = _userAPI.InitializeClient();
@@ -88,19 +107,25 @@ namespace DailyPlanner.Web.Controllers
                 if (res.IsSuccessStatusCode)
                 {
                     var result = res.Content.ReadAsStringAsync().Result;
-                    users = JsonConvert.DeserializeObject<User>(result);
+                    var user = JsonConvert.DeserializeObject<User>(result);
+                    if (user == null)
+                    {
+                        _logger.LogWarning("Error in Get method, user is NULL");
+                        return null;
+                    }
+                    return user;
                 }
-                if (users == null)
+                else
                 {
-                    _logger.LogWarning("Error in Get method, user is NULL");
+                    _logger.LogWarning("Error in Get user method, response status code is not success");
+                    return null;
                 }
-                return users;
             }
             catch (Exception e)
             {
                 _logger.LogWarning($"Error in Get method: {e.Message}");
+                return null;
             }
-            return users;
         }
         /// <summary>
         /// Creates a User.
@@ -131,7 +156,7 @@ namespace DailyPlanner.Web.Controllers
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Create([FromBody]User user)
+        public async Task<Response> Create([FromBody]User user)
         {
             try
             {
@@ -143,16 +168,42 @@ namespace DailyPlanner.Web.Controllers
                     HttpResponseMessage res = await client.PostAsync("api/user/post", content);
                     if (res.IsSuccessStatusCode)
                     {
-                        return RedirectToAction("GetAllUsers");
+                        return new Response
+                        {
+                            IsSuccess = true,
+                            StatusCode = StatusCodes.Status200OK,
+                        };
                     }
+                    else
+                    {
+                        _logger.LogWarning("Error in Create user method, response status code is not success");
+                        return new Response
+                        {
+                            IsSuccess = false,
+                            StatusCode = StatusCodes.Status400BadRequest,
+                            ErrorMessage = "Response status code is not success"
+                        };
+                    }
+                }
+                else
+                {
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        StatusCode = StatusCodes.Status500InternalServerError,
+                        ErrorMessage = "Model is not valid"
+                    };
                 }
             }
             catch (Exception e)
             {
                 _logger.LogWarning($"Error in Create method: {e.Message}");
+                return new Response
+                {
+                    IsSuccess = false,
+                    ErrorMessage = $"{e.Message}, {e.InnerException.Message}"
+                };
             }
-
-            return Ok(user);
         }
         /// <summary>
         /// Edit a specific User.
@@ -161,29 +212,28 @@ namespace DailyPlanner.Web.Controllers
         [HttpGet("{id}")]
         public async Task<UserDTO> Edit(Guid id)
         {
-            UserDTO user = new UserDTO();
             try
             {
-                if (id == null)
-                {
-                    _logger.LogWarning("In Edit method Id is NULL");
-                }
                 HttpClient client = _userAPI.InitializeClient();
                 HttpResponseMessage res = await client.GetAsync($"api/user/getUser/{id}");
 
                 if (res.IsSuccessStatusCode)
                 {
                     var result = await res.Content.ReadAsStringAsync();
-                    user = JsonConvert.DeserializeObject<UserDTO>(result);
+                    var user = JsonConvert.DeserializeObject<UserDTO>(result);
+                    return user;
+                }
+                else
+                {
+                    return null;
                 }
 
-                return user;
             }
             catch (Exception e)
             {
                 _logger.LogWarning($"Error in Edit method: {e.Message}");
+                return null;
             }
-            return user;
         }
         /// <summary>
         /// Edit a specific User.
@@ -192,7 +242,6 @@ namespace DailyPlanner.Web.Controllers
         [HttpPut("{id}")]
         public async Task<User> Edit([FromBody]User user)
         {
-            User newUser = new User();
             try
             {
                 if (ModelState.IsValid)
@@ -204,46 +253,66 @@ namespace DailyPlanner.Web.Controllers
                     if (res.IsSuccessStatusCode)
                     {
                         var result = await res.Content.ReadAsStringAsync();
-                        newUser = JsonConvert.DeserializeObject<User>(result);
+                        var newUser = JsonConvert.DeserializeObject<User>(result);
+                        return newUser;
                     }
+                    else
+                    {
+                        _logger.LogWarning("Error in Edit user method, response status code is not success");
+                        return null;
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning("Error in Edit user method, model is not valid");
+                    return null;
                 }
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"Error in Edit method: {e.Message}");
+                _logger.LogWarning($"Error in Edit user method: {e.Message}");
+                return null;
             }
-            return newUser;
         }
         /// <summary>
         /// Deletes a specific User.
         /// </summary>
         /// <param name="id">The user id to delete for</param>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<Response> Delete(Guid id)
         {
             try
             {
-                User user = new User();
                 HttpClient client = _userAPI.InitializeClient();
                 HttpResponseMessage res = await client.DeleteAsync($"api/user/delete/{id}");
-
                 if (res.IsSuccessStatusCode)
                 {
-                    var result = await res.Content.ReadAsStringAsync();
-                    user = JsonConvert.DeserializeObject<User>(result);
+                    return new Response
+                    {
+                        IsSuccess = true,
+                        StatusCode = StatusCodes.Status200OK
+                    };
                 }
-                if (user == null)
+                else
                 {
-                    _logger.LogInformation("In Delete method user is NULL");
-                    return NotFound();
+                    _logger.LogWarning("Error in Delete user method, response status code is not success");
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        StatusCode = StatusCodes.Status400BadRequest,
+                        ErrorMessage = "Response status code is not success"
+                    };
                 }
-                return Ok(user);
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"Error in Delete method: {e.Message}");
+                _logger.LogWarning($"Error in Delete user method: {e.Message}");
+                return new Response
+                {
+                    IsSuccess = false,
+                    ErrorMessage = $"{e.Message}, {e.InnerException.Message}"
+                };
             }
-            return Ok();
         }
     }
 }

@@ -26,7 +26,7 @@ namespace DailyPlanner.API
             services.AddAuthentication("Bearer")
                 .AddIdentityServerAuthentication(options =>
                 {
-                    options.Authority = "http://localhost:5000";
+                    options.Authority = Configuration["Url:Identity"];
                     options.RequireHttpsMetadata = false;
                     options.ApiName = "DailyPlanner.API";
                 });

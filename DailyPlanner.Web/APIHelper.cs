@@ -1,23 +1,35 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Microsoft.Extensions.Configuration;
 
 
 namespace DailyPlanner.Web
 {
     public class APIHelper
     {
-        private string _apiBaseURI = "https://dailyplannerapi.azurewebsites.net";
-        //private string _apiBaseURI = "http://localhost:64629";
-        public HttpClient InitializeClient()
+        private static HttpClient _client;
+
+        public APIHelper(IConfiguration configuration)
         {
-            var client = new HttpClient
+            Configuration = configuration;
+            _client = new HttpClient
             {
-                BaseAddress = new Uri(_apiBaseURI)
+                BaseAddress = new Uri(Configuration["Url:API"])
             };
-            client.DefaultRequestHeaders.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            return client;
+        }
+
+        public IConfiguration Configuration { get; }
+
+        public HttpClient InitializeClient(string token = null)
+        {
+            _client.DefaultRequestHeaders.Clear();
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                _client.SetBearerToken(token);
+            }
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            return _client;
         }
     }
     

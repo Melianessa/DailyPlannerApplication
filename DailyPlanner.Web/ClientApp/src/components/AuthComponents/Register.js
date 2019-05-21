@@ -35,17 +35,14 @@ export class Register extends Component {
         return;
     }
     handleClick() {
-        const { password, confirmPassword, email} = this.state.user;
-        if (!email.includes("@")||!email.includes(".")) {
-	        NotificationManager.error("Error message",
-		        `Email is invalid`,
-		        2000);
+        const { password, confirmPassword, email } = this.state.user;
+        var isCorrectEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(email);
+        if (!isCorrectEmail) {
+	        NotificationManager.error("Error message", `Email is invalid`, 2000);
         }
-        if (password !== confirmPassword) {
+        if (!password || password !== confirmPassword) {
 	        this.setState({ isValid: false });
-            NotificationManager.error("Error message",
-                `Passwords don't match`,
-                2000);
+            NotificationManager.error("Error message", `Passwords don't match`, 2000);
         } else if (password.length < 6) {
             NotificationManager.error("Error message",
                 `Password should be a minimun of six (6) characters in length`, 2500);
