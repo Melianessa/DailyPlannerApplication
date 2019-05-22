@@ -3,6 +3,7 @@ import "react-notifications/lib/notifications.css";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import { staticData } from "../Context";
+import { Link } from "react-router-dom";
 
 
 export class AddUser extends Component {
@@ -16,7 +17,7 @@ export class AddUser extends Component {
             dateOfBirth: new Date(),
             phone: "",
             email: "",
-            sex: sexList ,
+            sex: sexList,
             role: roleList,
             selectedRole: null,
             selectedSex: null,
@@ -56,14 +57,15 @@ export class AddUser extends Component {
         this.setState({ selectedRole: newRole });
     }
     handleClick() {
-	    let body = {
+        let body = {
             FirstName: this.state.firstName,
             LastName: this.state.lastName,
             DateOfBirth: this.state.dateOfBirth,
             Phone: this.state.phone,
             Email: this.state.email,
             Sex: this.state.selectedSex,
-            Role: this.state.selectedRole
+            Role: this.state.selectedRole,
+            status: ""
         }
 
         fetch("api/user/create",
@@ -72,14 +74,24 @@ export class AddUser extends Component {
                 headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${window.token}`
+                    "Authorization": window.token
                 },
                 body: JSON.stringify(body)
-            })//.then(NotificationManager.success("Success message", "User successfully added!", 3000))
+            })
+            .then(response => {
+                console.log(response);
+                if (response.ok) {
+                    return response.json();
+                } else if (response.status === 401) {
+                    this.setState({
+                        status: response.statusText
+                    });
+                }
+            })
             .then(this.setState({ redirect: true }));
     }
     handleCancel() {
-	    this.props.history.push("/user/list");
+        this.props.history.push("/user/list");
     }
     renderRedirect() {
         if (this.state.redirect) {
@@ -171,7 +183,7 @@ export class AddUser extends Component {
 
             <div className="form-group">
                 <button className="btn btn-success" onClick={this.handleClick}>Save user</button>
-	            <button className="btn btn-danger" onClick={this.handleCancel.bind(this)}>Cancel</button>
+                <button className="btn btn-danger" onClick={this.handleCancel.bind(this)}>Cancel</button>
             </div>
             {this.renderRedirect()}
         </div>;
@@ -180,7 +192,13 @@ export class AddUser extends Component {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
             : this.renderCreateForm();
-
+        if (this.state.status === "Unauthorized") {
+	        return <div>
+                <div>
+                    You are {this.state.status.toLowerCase()}! Please <Link to="/account/login">login</Link> or <Link to="/account/register">register</Link> to continue :)
+                </div>
+            </div>;
+        }
         return (
             <div>
                 <h1>Create user</h1>

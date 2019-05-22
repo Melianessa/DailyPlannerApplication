@@ -145,18 +145,26 @@ namespace DailyPlanner.Identity
                         RoleClaimType = "role"
                     };
                 });
-                //.AddIdentityServerAuthentication(options =>
-                //{
-                //    options.Authority = "https://localhost:44321";
-                //    options.RequireHttpsMetadata = false;
-                //    options.ApiName = "DailyPlanner.API";
-                //});
+            //.AddIdentityServerAuthentication(options =>
+            //{
+            //    options.Authority = "https://localhost:44321";
+            //    options.RequireHttpsMetadata = false;
+            //    options.ApiName = "DailyPlanner.API";
+            //});
             //services.AddCors(options =>
             //{
             //    options.AddPolicy("AllowSpecificOrigin", builder => builder
             //        .WithOrigins(Configuration.GetSection("IDP:AllowSpecificOrigin").Get<string[]>())
             //        .AllowAnyHeader()
             //        .AllowAnyMethod());
+            //});
+            //// Change login URL
+            //services.ConfigureApplicationCookie(options =>
+            //{
+            //    options.LoginPath = "/account/login";
+
+            //    // Change cookie timeout to expire in 15 seconds
+            //    options.ExpireTimeSpan = TimeSpan.FromSeconds(1500);
             //});
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

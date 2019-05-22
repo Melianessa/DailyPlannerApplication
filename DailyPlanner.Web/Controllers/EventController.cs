@@ -9,6 +9,7 @@ using DailyPlanner.DomainClasses.Models;
 using DailyPlanner.Helpers;
 using DailyPlanner.Identity.Controllers;
 using DailyPlanner.Web.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -17,7 +18,7 @@ using Newtonsoft.Json;
 
 namespace DailyPlanner.Web.Controllers
 {
-
+    [Authorize]
     [Route("api/[controller]/[action]")]
     [DailyPlannerExceptionFilter]
     public class EventController : Controller
@@ -36,13 +37,14 @@ namespace DailyPlanner.Web.Controllers
         /// <param name="date">The event date to search for</param>
         /// <returns>A list of events</returns>
         [HttpPost]
-        public async Task<IEnumerable<Event>> GetByDate(string date) //try [FromBody]
+        public async Task<IEnumerable<EventDTO>> GetByDate(string date) //try [FromBody]
         {
-            List<Event> ev = new List<Event>();
+            List<EventDTO> ev = new List<EventDTO>();
             try
             {
                 var id = User.GetId();
-                HttpClient client = _userAPI.InitializeClient();
+                string token = HttpContext.Request.Headers["Authorization"];
+                HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
                 //if (date == null)
                 //{
                 //    date = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
@@ -53,7 +55,7 @@ namespace DailyPlanner.Web.Controllers
                 if (res.IsSuccessStatusCode)
                 {
                     var result = await res.Content.ReadAsStringAsync();
-                    ev = JsonConvert.DeserializeObject<List<Event>>(result).Where(p => p.Id == id).OrderBy(p => p.StartDate).ToList();
+                    ev = JsonConvert.DeserializeObject<List<EventDTO>>(result).Where(p => p.UserId == id).OrderBy(p => p.StartDate).ToList();
                     return ev;
                 }
                 else
@@ -79,7 +81,8 @@ namespace DailyPlanner.Web.Controllers
             List<Event> ev = new List<Event>();
             try
             {
-                HttpClient client = _userAPI.InitializeClient();
+                string token = HttpContext.Request.Headers["Authorization"];
+                HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
                 HttpResponseMessage res = await client.GetAsync("api/event/getAll");
                 if (res.IsSuccessStatusCode)
                 {
@@ -109,7 +112,8 @@ namespace DailyPlanner.Web.Controllers
         {
             try
             {
-                HttpClient client = _userAPI.InitializeClient();
+                string token = HttpContext.Request.Headers["Authorization"];
+                HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
                 HttpResponseMessage res = await client.GetAsync($"api/event/{id}");
                 if (res.IsSuccessStatusCode)
                 {
@@ -139,7 +143,7 @@ namespace DailyPlanner.Web.Controllers
         /// <remarks>
         /// Sample request:
         ///
-        ///     POST /Todo
+        ///     POST 
         ///     {
         ///        "id": "1",
         ///        "title": "birthday",
@@ -181,7 +185,8 @@ namespace DailyPlanner.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    HttpClient client = _userAPI.InitializeClient();
+                    string token = HttpContext.Request.Headers["Authorization"];
+                    HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
                     var authId = User.GetId();
                     ev.UserId = authId;
                     var content = new StringContent(JsonConvert.SerializeObject(ev), Encoding.UTF8,
@@ -232,7 +237,8 @@ namespace DailyPlanner.Web.Controllers
         {
             try
             {
-                HttpClient client = _userAPI.InitializeClient();
+                string token = HttpContext.Request.Headers["Authorization"];
+                HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
                 HttpResponseMessage res = await client.GetAsync($"api/event/get/{id}");
                 if (res.IsSuccessStatusCode)
                 {
@@ -267,8 +273,8 @@ namespace DailyPlanner.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    HttpClient client = _userAPI.InitializeClient();
-
+                    string token = HttpContext.Request.Headers["Authorization"];
+                    HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
                     var content = new StringContent(JsonConvert.SerializeObject(ev), Encoding.UTF8, "application/json");
                     HttpResponseMessage res = await client.PutAsync($"api/event/put/{ev.Id}", content);
                     if (res.IsSuccessStatusCode)
@@ -304,7 +310,8 @@ namespace DailyPlanner.Web.Controllers
         {
             try
             {
-                HttpClient client = _userAPI.InitializeClient();
+                string token = HttpContext.Request.Headers["Authorization"];
+                HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
                 HttpResponseMessage res = await client.DeleteAsync($"api/event/delete/{id}");
 
                 if (res.IsSuccessStatusCode)

@@ -96,7 +96,9 @@ namespace DailyPlanner.Web.Controllers
                             {
                                 IsSuccess = true,
                                 StatusCode = StatusCodes.Status200OK,
-                                Token = response["access_token"]
+                                Token = response["access_token"],
+                                RefreshToken = response["refresh_token"],
+                                ExpirationTime = response["expires_in"]
                             };
                         }
                         _logger.LogWarning("Error in Login method, token is NULL");

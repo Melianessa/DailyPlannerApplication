@@ -4,12 +4,14 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../NavMenu.css";
 import "../style.css";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import { NavMenu } from "../NavMenu"
 
 
 export class Login extends Component {
     static displayName = Login.name;
     constructor(props) {
         super(props);
+        
         this.state = {
             user: [],
             login: "",
@@ -46,9 +48,11 @@ export class Login extends Component {
                 return json;
             }).then(data => {
                 if (data.token) {
+                    let localStorageValues = [data.token, data.expirationTime, data.refreshToken];
+                    let localStorageKeys = ["token", "expirationTime", "refreshToken"];
+                    localStorage.setItem("tokenData", JSON.stringify(localStorageValues));
                     window.token = `Bearer ${data.token}`;
                 }
-                window.login = data.isSuccess;
                 this.setState({
                     isSuccess: data.isSuccess
                 });

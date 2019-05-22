@@ -72,7 +72,8 @@ namespace DailyPlanner.Web.Controllers
         {
             try
             {
-                HttpClient client = _userAPI.InitializeClient();
+                string token = HttpContext.Request.Headers["Authorization"];
+                HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
                 HttpResponseMessage res = await client.GetAsync("api/user/getAll");
                 if (res.IsSuccessStatusCode)
                 {
@@ -102,7 +103,8 @@ namespace DailyPlanner.Web.Controllers
         {
             try
             {
-                HttpClient client = _userAPI.InitializeClient();
+                string token = HttpContext.Request.Headers["Authorization"];
+                HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
                 HttpResponseMessage res = await client.GetAsync($"api/user/get/{id}");
                 if (res.IsSuccessStatusCode)
                 {
@@ -133,7 +135,7 @@ namespace DailyPlanner.Web.Controllers
         /// <remarks>
         /// Sample request:
         ///
-        ///     POST /Todo
+        ///     POST 
         ///     {
         ///        "id": 1,
         ///        "firstName": "Dan",
@@ -160,7 +162,8 @@ namespace DailyPlanner.Web.Controllers
         {
             try
             {
-                HttpClient client = _userAPI.InitializeClient();
+                string token = HttpContext.Request.Headers["Authorization"];
+                HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
                 if (ModelState.IsValid)
                 {
                     var content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8,
@@ -214,7 +217,8 @@ namespace DailyPlanner.Web.Controllers
         {
             try
             {
-                HttpClient client = _userAPI.InitializeClient();
+                string token = HttpContext.Request.Headers["Authorization"];
+                HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
                 HttpResponseMessage res = await client.GetAsync($"api/user/getUser/{id}");
 
                 if (res.IsSuccessStatusCode)
@@ -246,8 +250,8 @@ namespace DailyPlanner.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    HttpClient client = _userAPI.InitializeClient();
-
+                    string token = HttpContext.Request.Headers["Authorization"];
+                    HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
                     var content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
                     HttpResponseMessage res = await client.PutAsync($"api/user/put/{user.Id}", content);
                     if (res.IsSuccessStatusCode)
@@ -283,7 +287,8 @@ namespace DailyPlanner.Web.Controllers
         {
             try
             {
-                HttpClient client = _userAPI.InitializeClient();
+                string token = HttpContext.Request.Headers["Authorization"];
+                HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
                 HttpResponseMessage res = await client.DeleteAsync($"api/user/delete/{id}");
                 if (res.IsSuccessStatusCode)
                 {

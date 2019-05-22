@@ -6,6 +6,7 @@ import "../NavMenu.css";
 import "../style.css";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { staticData } from "../Context";
+import { Link } from "react-router-dom";
 
 export class EditEvent extends Component {
     static displayName = EditEvent.name;
@@ -22,7 +23,8 @@ export class EditEvent extends Component {
             startDate: new Date(),
             endDate: new Date(),
             loading: true,
-            offset: new Date().getTimezoneOffset()
+            offset: new Date().getTimezoneOffset(),
+            status:""
         }
         this.startPage = this.startPage.bind(this);
         this.startPage(this.props.match.params.id);
@@ -34,19 +36,26 @@ export class EditEvent extends Component {
 			        headers: {
 				        "Accept": "application/json",
 				        "Content-Type": "application/json",
-				        "Authorization": `Bearer ${window.token}`
+				        "Authorization": window.token
 			        }
 		        })
-            .then(response => {
-                const json = response.json();
-                return json;
-            }).then(data => {
-                let startMinutes = new Date(data.startDate).setMinutes(new Date(data.startDate).getMinutes() - this.state.offset);
-                let endMinutes = new Date(data.endDate).setMinutes(new Date(data.endDate).getMinutes() - this.state.offset);
-                data.startDate = new Date(startMinutes).toISOString();
-                data.endDate = new Date(endMinutes).toISOString();
+	        .then(response => {
+		        console.log(response);
+		        if (response.ok) {
+			        return response.json();
+		        } else if (response.status === 401) {
+			        this.setState({
+				        status: response.statusText
+			        });
+		        }
+	        }).then(data => {
+		        var event = data ? data : [];
+		        let startMinutes = new Date(event.startDate).setMinutes(new Date(event.startDate).getMinutes() - this.state.offset);
+                let endMinutes = new Date(event.endDate).setMinutes(new Date(event.endDate).getMinutes() - this.state.offset);
+                event.startDate = new Date(startMinutes).toISOString();
+                event.endDate = new Date(endMinutes).toISOString();
                 this.setState({
-                    event: data, loading: false, selectedType: data.type
+                    event: event, loading: false, selectedType: event.type
                 });
                 });
     }
@@ -78,7 +87,7 @@ export class EditEvent extends Component {
                     headers: {
                         "Accept": "application/json",
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${window.token}`
+                        "Authorization": window.token
                     },
                     body: JSON.stringify(body)
                 }).then((response) => response.json())
@@ -98,7 +107,12 @@ export class EditEvent extends Component {
         }
     }
     renderEditForm(event) {
-        return <div>
+	    if (!event || event.length === 0) {
+		    return <div>
+                Event is empty
+            </div>;
+	    }
+	    return <div>
             <div className="form-group row">
                 <label className=" control-label col-md-12">Title:</label>
                 <div className="col-md-4">
@@ -167,6 +181,13 @@ export class EditEvent extends Component {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
             : this.renderEditForm(this.state.event);
+        if (this.state.status === "Unauthorized") {
+	        return <div>
+                <div>
+                    You are {this.state.status.toLowerCase()}! Please <Link to="/account/login">login</Link> or <Link to="/account/register">register</Link> to continue :)
+                </div>
+            </div>;
+        }
         return (
             <div>
                 <h1>Edit event</h1>

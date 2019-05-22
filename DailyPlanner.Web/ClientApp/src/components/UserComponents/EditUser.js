@@ -6,6 +6,7 @@ import "../NavMenu.css";
 import "../style.css";
 import { staticData } from "../Context";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import { Link } from "react-router-dom";
 
 export class EditUser extends Component {
     static displayName = EditUser.name;
@@ -25,7 +26,8 @@ export class EditUser extends Component {
             selectedRole: null,
             selectedSex: null,
             redirect: false,
-            loading: true
+            loading: true,
+            status: ""
         }
 
         this.handleClick = this.handleClick.bind(this);
@@ -39,20 +41,23 @@ export class EditUser extends Component {
                 headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${window.token}`
+                    "Authorization": window.token
                 }
             })
             .then(response => {
-                const json = response.json();
-                console.log(json);
-                return json;
+                console.log(response);
+                if (response.ok) {
+                    return response.json();
+                } else if (response.status === 401) {
+                    this.setState({
+                        status: response.statusText
+                    });
+                }
             }).then(data => {
-                console.log(data);
-                console.log(this.state.user);
+                var user = data ? data : [];
                 this.setState({
-                    user: data, loading: false, selectedRole: data.role, selectedSex: data.sex
+                    user: user, loading: false, selectedRole: user.role, selectedSex: user.sex
                 });
-                console.log(this.state.event);
             });
     }
     handleChange(propertyName, event) {
@@ -89,14 +94,22 @@ export class EditUser extends Component {
                 headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${window.token}`
+                    "Authorization": window.token
                 },
                 body: JSON.stringify(body)
-            }).then((response) => response.json())
+            }).then(response => {
+                console.log(response);
+                if (response.ok) {
+                    return response.json();
+                } else if (response.status === 401) {
+                    this.setState({
+                        status: response.statusText
+                    });
+                }
+            })
             .then(data => {
-                console.log(data);
-                console.log(this.state.user);
-                this.setState({ user: data, redirect: true });
+	            var user = data ? data : [];
+                this.setState({ user: user, redirect: true });
             });
     }
     handleCancel() {
@@ -111,6 +124,11 @@ export class EditUser extends Component {
         }
     }
     renderEditForm(user) {
+        if (!user || user.length === 0) {
+            return <div>
+                User is empty
+            </div>;
+        }
         return <div>
             <div className="form-group row">
                 <label className=" control-label col-md-12">First Name:</label>
@@ -197,6 +215,13 @@ export class EditUser extends Component {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
             : this.renderEditForm(this.state.user);
+        if (this.state.status === "Unauthorized") {
+            return <div>
+                <div>
+                    You are {this.state.status.toLowerCase()}! Please <Link to="/account/login">login</Link> or <Link to="/account/register">register</Link> to continue :)
+                </div>
+            </div>;
+        }
         return (
             <div>
                 <h1>Edit user</h1>

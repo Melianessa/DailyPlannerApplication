@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
 export class Home extends Component {
     displayName = Home.name
@@ -13,6 +14,7 @@ export class Home extends Component {
                     <li><strong>Plan your weekends</strong></li>
                     <li><strong>Create and Manage Events very easy</strong></li>
                 </ul>
+                <p> Please <Link to="/account/login">login</Link> or <Link to="/account/register">register</Link> to see your events :)</p>
             </div>
         );
     }

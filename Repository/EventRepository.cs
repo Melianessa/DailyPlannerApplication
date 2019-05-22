@@ -4,10 +4,11 @@ using System.Linq;
 using DailyPlanner.DomainClasses;
 using DailyPlanner.DomainClasses.Interfaces;
 using DailyPlanner.DomainClasses.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DailyPlanner.Repository
 {
-    public class EventRepository : IDataRepository<Event>, IEventBase<Event>
+    public class EventRepository : IDataRepository<Event>, IEventBase<EventDTO>
     {
         private readonly PlannerDbContext _context;
 
@@ -19,14 +20,14 @@ namespace DailyPlanner.Repository
         {
             return _context.Events.ToList();
         }
-        public IEnumerable<Event> GetByDate(string date)
+        public IEnumerable<EventDTO> GetByDate(string date)
         {
             var d = DateTime.Parse(date);
             //if (date == null)
             //{
             //    d = DateTime.UtcNow;
             //}
-            return _context.Events.Where(p => p.StartDate.Date == d.Date).ToList();
+            return _context.Events.Include(p=>p.User).Where(p => p.StartDate.Date == d.Date).Select(p=>new EventDTO(p)).ToList();
         }
 
         public Event Get(Guid id)

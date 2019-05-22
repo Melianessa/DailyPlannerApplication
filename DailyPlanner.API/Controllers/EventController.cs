@@ -13,16 +13,16 @@ namespace DailyPlanner.API.Controllers
     public class EventController : ControllerBase
     {
         private readonly IDataRepository<Event> _iRepo;
-        private readonly IEventBase<Event> _iEventRepo;
+        private readonly IEventBase<EventDTO> _iEventRepo;
 
-        public EventController(IDataRepository<Event> repo, IEventBase<Event> evRepo)
+        public EventController(IDataRepository<Event> repo, IEventBase<EventDTO> evRepo)
         {
             _iRepo = repo;
             _iEventRepo = evRepo;
         }
 
         [HttpPost]
-        public IEnumerable<Event> GetByDate([FromBody] string date)
+        public IEnumerable<EventDTO> GetByDate([FromBody] string date)
         {
             return _iEventRepo.GetByDate(date);
         }

@@ -3,6 +3,7 @@ import "react-notifications/lib/notifications.css";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import { staticData } from "../Context";
+import { Link } from "react-router-dom";
 
 export class AddEvent extends Component {
     constructor(props) {
@@ -60,11 +61,20 @@ export class AddEvent extends Component {
                 headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${window.token}`
+                    "Authorization": window.token
                 },
                 body: JSON.stringify(body)
             })//.then(NotificationManager.success('Success message', 'Event successfully added!', 3000))
-	        .then(this.setState({ redirect: true }));
+	        .then(response => {
+		        console.log(response);
+		        if (response.ok) {
+			        return response.json();
+		        } else if (response.status === 401) {
+			        this.setState({
+				        status: response.statusText
+			        });
+		        }
+	        }).then(this.setState({ redirect: true }));
 
     }
     handleCancel() {
@@ -151,7 +161,13 @@ export class AddEvent extends Component {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
             : this.renderCreateForm();
-
+        if (this.state.status === "Unauthorized") {
+	        return <div>
+                <div>
+                    You are {this.state.status.toLowerCase()}! Please <Link to="/account/login">login</Link> or <Link to="/account/register">register</Link> to continue :)
+                </div>
+            </div>;
+        }
         return (
             <div>
                 <h1>Create event</h1>
