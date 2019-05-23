@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 const rootElement = document.getElementById('root');
+
 window.getToken = () => window.token ? window.token : "";
 window.isAuthorized = (responseStatus) => {
     if (responseStatus === "Unauthorized") {
@@ -20,6 +21,7 @@ window.isAuthorized = (responseStatus) => {
         </div>;
     }
 }
+
 
 ReactDOM.render(
     <BrowserRouter basename={baseUrl}>

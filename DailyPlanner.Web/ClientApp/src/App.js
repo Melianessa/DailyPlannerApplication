@@ -11,10 +11,20 @@ import { EditUser } from "./components/UserComponents/EditUser";
 import { Login } from "./components/AuthComponents/Login";
 import { Logout } from "./components/AuthComponents/Logout"
 import { Register } from "./components/AuthComponents/Register";
+import { GetUser } from "./components/UserComponents/GetUser";
 
 
+ 
 export default class App extends Component {
 	displayName = App.name
+
+	constructor(props) {
+        super(props);
+        var isContainsToken = localStorage.getItem('tokenData');
+        if (isContainsToken) {
+            window.token = "Bearer " + isContainsToken;
+        };
+	}
 
 	render() {
 		return (
@@ -29,6 +39,7 @@ export default class App extends Component {
                 <Route path='/account/register' component={Register} />
                 <Route path='/account/login' component={Login} />
                 <Route path='/logout' component={Logout} />
+                <Route path='/user/info' component={GetUser} />
                 <Route path='/swagger' component={() => { window.location = '/swagger'; return null; }} />
             </Layout>
 		);

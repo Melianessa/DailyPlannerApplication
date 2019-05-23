@@ -48,10 +48,11 @@ export class Login extends Component {
                 return json;
             }).then(data => {
                 if (data.token) {
-                    let localStorageValues = [data.token, data.expirationTime, data.refreshToken];
-                    let localStorageKeys = ["token", "expirationTime", "refreshToken"];
-                    localStorage.setItem("tokenData", JSON.stringify(localStorageValues));
-                    window.token = `Bearer ${data.token}`;
+                    //TODO: add another token values
+                    localStorage.clear();
+                    let localStorageValues = [data.token];
+                    localStorage.setItem("tokenData", data.token);
+                    window.token = "Bearer " + data.token;
                 }
                 this.setState({
                     isSuccess: data.isSuccess

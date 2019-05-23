@@ -21,6 +21,9 @@ namespace DailyPlanner.Web
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>().ConfigureLogging(log=>log.AddFilter<FileLoggerProvider>("FileLogger",LogLevel.Error));
+                .UseStartup<Startup>().UseKestrel(options =>
+                {
+                    options.Limits.MaxRequestLineSize = 20480;
+                }).ConfigureLogging(log=>log.AddFilter<FileLoggerProvider>("FileLogger",LogLevel.Error));
     }
 }

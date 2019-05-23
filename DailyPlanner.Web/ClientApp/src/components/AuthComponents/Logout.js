@@ -5,9 +5,19 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 export class Logout extends Component {
     static displayName = Logout.name;
     constructor(props) {
-	    super(props);
-	    this.handleLogout = this.handleLogout.bind(this);
+        super(props);
+        this.handleLogout = this.handleLogout.bind(this);
         this.helperLogout = this.helperLogout.bind(this);
+
+        fetch("api/account/logout",
+	        {
+		        method: "GET",
+		        headers: {
+			        "Accept": "application/json",
+			        "Content-Type": "application/json",
+			        "Authorization": window.token
+		        }
+	        });
     }
     helperLogout() {
         window.token = "";

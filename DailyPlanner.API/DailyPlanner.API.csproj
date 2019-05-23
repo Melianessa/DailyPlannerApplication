@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DailyPlanner.Helpers\DailyPlanner.Helpers.csproj" />
     <ProjectReference Include="..\Repository\DailyPlanner.Repository.csproj" />
   </ItemGroup>
 

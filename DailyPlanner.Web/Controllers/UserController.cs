@@ -98,21 +98,22 @@ namespace DailyPlanner.Web.Controllers
         /// </summary>
         /// <param name="id">The user id to search for</param>
         /// <returns>A user information</returns>
-        [HttpGet("{id}")]
-        public async Task<User> Get(Guid id)
+        [HttpGet]
+        public async Task<UserDTO> GetUser()
         {
             try
             {
+                var id = User.GetId();
                 string token = HttpContext.Request.Headers["Authorization"];
                 HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
-                HttpResponseMessage res = await client.GetAsync($"api/user/get/{id}");
+                HttpResponseMessage res = await client.GetAsync($"api/user/getUser/{id}");
                 if (res.IsSuccessStatusCode)
                 {
                     var result = res.Content.ReadAsStringAsync().Result;
-                    var user = JsonConvert.DeserializeObject<User>(result);
+                    var user = JsonConvert.DeserializeObject<UserDTO>(result);
                     if (user == null)
                     {
-                        _logger.LogWarning("Error in Get method, user is NULL");
+                        _logger.LogWarning("Error in Get user method, user is NULL");
                         return null;
                     }
                     return user;
@@ -125,7 +126,7 @@ namespace DailyPlanner.Web.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"Error in Get method: {e.Message}");
+                _logger.LogWarning($"Error in Get user method: {e.Message}");
                 return null;
             }
         }

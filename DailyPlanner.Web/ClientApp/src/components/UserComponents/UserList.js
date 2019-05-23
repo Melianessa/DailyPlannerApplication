@@ -24,7 +24,7 @@ export class UserList extends Component {
                 headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
-                    "Authorization": window.getToken()
+                    "Authorization": window.token
                 }
             })
             .then(response => {

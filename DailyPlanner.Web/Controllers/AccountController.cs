@@ -5,10 +5,12 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using DailyPlanner.Helpers;
 using DailyPlanner.Identity.Models;
 using DailyPlanner.Identity.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -17,11 +19,12 @@ namespace DailyPlanner.Web.Controllers
     [Route("api/[controller]/[action]")]
     public class AccountController : Controller
     {
-        IdentityHelper _apiBaseURI = new IdentityHelper();
+        IdentityHelper _apiBaseURI;
         private readonly ILogger _logger;
-        public AccountController(ILogger<UserController> logger)
+        public AccountController(ILogger<UserController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _apiBaseURI = new IdentityHelper(configuration);
         }
         [HttpPost]
         public async Task<Response> Register([FromBody] UserRegisterModel model)
@@ -138,21 +141,51 @@ namespace DailyPlanner.Web.Controllers
                 };
             }
         }
-    }
 
-    public class IdentityHelper
-    {
-        //private string _apiBaseURI = "https://dailyplannerapi.azurewebsites.net";
-        private string _apiBaseURI = "http://localhost:5000";
-        public HttpClient InitializeClient()
+        [HttpGet]
+        public async Task<Response> Logout()
         {
-            var client = new HttpClient
+            try
             {
-                BaseAddress = new Uri(_apiBaseURI)
-            };
-            client.DefaultRequestHeaders.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            return client;
+                string token = HttpContext.Request.Headers["Authorization"];
+                HttpClient client = _apiBaseURI.InitializeClient(token?.ToReadableToken());
+                string idTokenRaw = HttpContext.Request.Headers["Authorization"];
+                var idTokenHint = idTokenRaw.ToReadableToken();
+                var postLogoutRedirectUri = "http://localhost:50472";
+                //var req = new HttpRequestMessage(HttpMethod.Get, $"connect/endsession?id_token_hint={idTokenHint}&post_logout_redirect_uri={postLogoutRedirectUri}");
+                //var res = await client.SendAsync(req);
+                var len =
+                    $"http://localhost:5000/connect/endsession?id_token_hint={idTokenHint}&post_logout_redirect_uri={postLogoutRedirectUri}";
+                var parameters = $"?id_token_hint={idTokenHint}&post_logout_redirect_uri={postLogoutRedirectUri}";
+                HttpResponseMessage res = await client.GetAsync($"connect/endsession?id_token_hint={idTokenHint}&post_logout_redirect_uri={postLogoutRedirectUri}");
+                if (res.IsSuccessStatusCode)
+                {
+                    return new Response
+                    {
+                        IsSuccess = true,
+                        StatusCode = StatusCodes.Status200OK
+                    };
+                }
+                else
+                {
+                    _logger.LogWarning("Error in Logout method, response status code is not success");
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        StatusCode = StatusCodes.Status400BadRequest,
+                        ErrorMessage = "Response status code is not success"
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning($"Error in Logout method: {e.Message}");
+                return new Response()
+                {
+                    IsSuccess = false,
+                    ErrorMessage = $"{e.Message}, {e.InnerException.Message}"
+                };
+            }
         }
     }
 }
