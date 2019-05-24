@@ -133,9 +133,8 @@ namespace DailyPlanner.Identity
                 .AddOpenIdConnect("oidc", "OpenID Connect", options =>
                 {
                     options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-                    options.SignOutScheme = IdentityServerConstants.SignoutScheme;
+                    options.SignOutScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
                     options.SaveTokens = true;
-
                     options.Authority = "https://demo.identityserver.io/";
                     options.ClientId = "implicit";
 

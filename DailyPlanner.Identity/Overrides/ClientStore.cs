@@ -44,8 +44,8 @@ namespace DailyPlanner.Identity.Overrides
                 // 4 weeks
                 SlidingRefreshTokenLifetime = 7 * 24 * 60 * 60,
                 AccessTokenType = AccessTokenType.Jwt,
-                // 1 hour
-                AccessTokenLifetime = 60 * 60 * 24 * 10,
+                // 6 hours
+                AccessTokenLifetime = 60 * 60 * 6,
                 UpdateAccessTokenClaimsOnRefresh = true
             };
         }

@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using DailyPlanner.Helpers;
 using DailyPlanner.Identity.Models;
 using DailyPlanner.Identity.Controllers;
+using IdentityServer4.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -21,10 +23,13 @@ namespace DailyPlanner.Web.Controllers
     {
         IdentityHelper _apiBaseURI;
         private readonly ILogger _logger;
+        
         public AccountController(ILogger<UserController> logger, IConfiguration configuration)
         {
             _logger = logger;
             _apiBaseURI = new IdentityHelper(configuration);
+            
+
         }
         [HttpPost]
         public async Task<Response> Register([FromBody] UserRegisterModel model)
@@ -143,48 +148,55 @@ namespace DailyPlanner.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<Response> Logout()
+        public async void Logout()
         {
             try
             {
                 string token = HttpContext.Request.Headers["Authorization"];
                 HttpClient client = _apiBaseURI.InitializeClient(token?.ToReadableToken());
-                string idTokenRaw = HttpContext.Request.Headers["Authorization"];
-                var idTokenHint = idTokenRaw.ToReadableToken();
-                var postLogoutRedirectUri = "http://localhost:50472";
-                //var req = new HttpRequestMessage(HttpMethod.Get, $"connect/endsession?id_token_hint={idTokenHint}&post_logout_redirect_uri={postLogoutRedirectUri}");
-                //var res = await client.SendAsync(req);
-                var len =
-                    $"http://localhost:5000/connect/endsession?id_token_hint={idTokenHint}&post_logout_redirect_uri={postLogoutRedirectUri}";
-                var parameters = $"?id_token_hint={idTokenHint}&post_logout_redirect_uri={postLogoutRedirectUri}";
-                HttpResponseMessage res = await client.GetAsync($"connect/endsession?id_token_hint={idTokenHint}&post_logout_redirect_uri={postLogoutRedirectUri}");
-                if (res.IsSuccessStatusCode)
-                {
-                    return new Response
-                    {
-                        IsSuccess = true,
-                        StatusCode = StatusCodes.Status200OK
-                    };
-                }
-                else
-                {
-                    _logger.LogWarning("Error in Logout method, response status code is not success");
-                    return new Response
-                    {
-                        IsSuccess = false,
-                        StatusCode = StatusCodes.Status400BadRequest,
-                        ErrorMessage = "Response status code is not success"
-                    };
-                }
+                var id = User.GetClientId();
+                
+                await HttpContext.SignOutAsync("Cookies");
+                await HttpContext.SignOutAsync("oidc");
+                await HttpContext.SignOutAsync("Bearer");
+                //string token = HttpContext.Request.Headers["Authorization"];
+                //HttpClient client = _apiBaseURI.InitializeClient(token?.ToReadableToken());
+                //string idTokenRaw = HttpContext.Request.Headers["Authorization"];
+                //var idTokenHint = idTokenRaw.ToReadableToken();
+                //var postLogoutRedirectUri = "http://localhost:50472";
+                ////var req = new HttpRequestMessage(HttpMethod.Get, $"connect/endsession?id_token_hint={idTokenHint}&post_logout_redirect_uri={postLogoutRedirectUri}");
+                ////var res = await client.SendAsync(req);
+                //var len =
+                //    $"http://localhost:5000/connect/endsession?id_token_hint={idTokenHint}&post_logout_redirect_uri={postLogoutRedirectUri}";
+                //var postLogoutRedirectUriNew = System.Web.HttpUtility.UrlEncode(postLogoutRedirectUri);
+                //HttpResponseMessage res = await client.GetAsync($"connect/endsession?id_token_hint={idTokenHint}&post_logout_redirect_uri={postLogoutRedirectUriNew}");
+                //if (res.IsSuccessStatusCode)
+                //{
+                //    return new Response
+                //    {
+                //        IsSuccess = true,
+                //        StatusCode = StatusCodes.Status200OK
+                //    };
+                //}
+                //else
+                //{
+                //    _logger.LogWarning("Error in Logout method, response status code is not success");
+                //    return new Response
+                //    {
+                //        IsSuccess = false,
+                //        StatusCode = StatusCodes.Status400BadRequest,
+                //        ErrorMessage = "Response status code is not success"
+                //    };
+                //}
             }
             catch (Exception e)
             {
                 _logger.LogWarning($"Error in Logout method: {e.Message}");
-                return new Response()
-                {
-                    IsSuccess = false,
-                    ErrorMessage = $"{e.Message}, {e.InnerException.Message}"
-                };
+                //return new Response()
+                //{
+                //    IsSuccess = false,
+                //    ErrorMessage = $"{e.Message}, {e.InnerException.Message}"
+                //};
             }
         }
     }

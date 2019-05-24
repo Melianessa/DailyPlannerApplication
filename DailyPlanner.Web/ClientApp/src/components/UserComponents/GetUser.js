@@ -2,7 +2,7 @@
 import "react-notifications/lib/notifications.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";
-import male from "./male.png";
+import male from "../img/male.png";
 
 
 export class GetUser extends Component {
@@ -56,7 +56,7 @@ export class GetUser extends Component {
         }
         return <div className="container">
             <div className="row">
-                <div className="col-lg-5">
+                <div className="col-lg-4">
                     <div className="form-group row">
                         <label className=" control-label col-md-12">Name:</label>
                         <div className="col-md-4">
@@ -94,14 +94,16 @@ export class GetUser extends Component {
                         </div>
                     </div >
                 </div>
-                <div className="col-lg-5">
+                <div className="col-lg-4">
                     <div className="form-group row">
-	                    <button className="btn btn-warning" onClick={() => this.handleEdit(this.state.user.id)}>Edit</button>
+                        <img src={male} width="200" height="200" alt="User picture"/>
                     </div>
-	                <div className="form-group row">
-                        <img src={male} width="100" height="100" alt="User picture"/>
-	                </div>
-                </div>
+	                                </div>
+	            <div className="col-lg-4">
+		            <div className="form-group row">
+			            <button className="btn btn-warning" onClick={() => this.handleEdit(this.state.user.id)}>Edit information</button>
+		            </div>
+	            </div>
             </div>
         </div>;
     }

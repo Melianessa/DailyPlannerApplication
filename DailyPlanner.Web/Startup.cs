@@ -34,7 +34,9 @@ namespace DailyPlanner.Web
                     options.Authority = Configuration["Url:Identity"];
                     options.RequireHttpsMetadata = false;
                     options.ApiName = "DailyPlanner.Web";
-                });
+                })
+                .AddCookie("Cookies")
+                .AddCookie("oidc");
             services.AddAutoMapper();
             services.AddScoped<DailyPlannerExceptionFilterAttribute>();
             // In production, the React files will be served from this directory

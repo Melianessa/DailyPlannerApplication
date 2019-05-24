@@ -64,11 +64,6 @@ export class UserList extends Component {
                     "Authorization": window.token
                 }
             })
-            .then(this.setState({
-                users: this.state.users.filter((rec) => {
-                    return (rec.id !== id);
-                })
-            }))
             .then(response => {
                 console.log(response);
                 if (response.ok) {
@@ -81,7 +76,13 @@ export class UserList extends Component {
                         status: response.statusText
                     });
                 }
-            });
+            })
+            .then(this.setState({
+                users: this.state.users.filter((rec) => {
+                    return (rec.id !== id);
+                })
+            }))
+            ;
     }
 
     handleDelete(id) {
@@ -106,12 +107,12 @@ export class UserList extends Component {
         this.props.history.push("/user/edit/" + id);
     }
     renderUser(users) {
-	    
-	    if (!users || users.length === 0) {
-		    return <div>
+
+        if (!users || users.length === 0) {
+            return <div>
                 User list is empty
             </div>;
-	    }
+        }
         return (
             <table className="table table-striped">
                 <thead>
@@ -161,9 +162,9 @@ export class UserList extends Component {
             ? <p><em>Loading...</em></p>
             : this.renderUser(this.state.users, this.state.itemsPerPage);
         if (this.state.status === "Unauthorized") {
-	        return <div>
+            return <div>
                 <div>
-	                You are {this.state.status.toLowerCase()}! Please <Link to="/account/login">login</Link> or <Link to="/account/register">register</Link> to continue :)
+                    You are {this.state.status.toLowerCase()}! Please <Link to="/account/login">login</Link> or <Link to="/account/register">register</Link> to continue :)
                 </div>
             </div>;
 
