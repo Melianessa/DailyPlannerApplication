@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using DailyPlanner.DomainClasses;
 using DailyPlanner.DomainClasses.Interfaces;
@@ -22,11 +23,7 @@ namespace DailyPlanner.Repository
         }
         public IEnumerable<EventDTO> GetByDate(string date)
         {
-            var d = DateTime.Parse(date);
-            //if (date == null)
-            //{
-            //    d = DateTime.UtcNow;
-            //}
+            var d = DateTime.Parse(date, CultureInfo.InvariantCulture);
             return _context.Events.Include(p=>p.User).Where(p => p.StartDate.Date == d.Date).Select(p=>new EventDTO(p)).ToList();
         }
 

@@ -12,10 +12,13 @@ namespace DailyPlanner.DomainClasses.Models
         [Required]
         public string Title { get; set; }
         public string Description { get; set; }
+        [Required]
         public DateTime StartDate { get; set; }
+        [Required]
         public DateTime EndDate { get; set; }
         public DateTime CreationDate { get; set; }
         public bool IsActive { get; set; }
+        [Required]
         public EventEnum Type { get; set; }
         public User User { get; set; }
     }

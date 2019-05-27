@@ -34,7 +34,7 @@ export class Logout extends Component {
     helperLogout() {
         window.token = "";
         localStorage.clear();
-	    this.props.history.push("/");
+        this.setState({ redirect: true });
     }
     handleLogout() {
         confirmAlert({
@@ -51,5 +51,32 @@ export class Logout extends Component {
                 }
             ]
         });
+    }
+    renderRedirect() {
+        if (this.state.redirect) {
+            this.props.history.push("/");
+        }
+    }
+    renderLogout() {
+        return <div>
+            <div className="form-group row">
+                
+                <div className="col-md-4">
+                    <label className=" control-label col-md-12">You are successfully logout </label>
+                </div>
+            </div>
+            {this.renderRedirect()}
+        </div>;
+    }
+    render() {
+        let contents = this.state.loading
+            ? <p><em>Loading...</em></p>
+            : this.renderLogout();
+        return (
+            <div>
+                <h1>Logout</h1>
+                {contents}
+            </div>
+        );
     }
 }

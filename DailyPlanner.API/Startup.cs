@@ -21,7 +21,6 @@ namespace DailyPlanner.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication("Bearer")
@@ -41,7 +40,6 @@ namespace DailyPlanner.API
             services.AddMvcCore().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonFormatters().AddAuthorization();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -55,19 +53,10 @@ namespace DailyPlanner.API
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
-            try
-            {
-                app.UseMvc(routes =>
+            app.UseMvc(routes =>
             {
                 routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-
         }
     }
 }

@@ -15,6 +15,8 @@ namespace DailyPlanner.Test
     [TestClass]
     public class EventTests
     {
+
+        //TODO: add negative cases
         readonly Event[] _events = new[]
             {
              new Event() { Id=Guid.NewGuid(), Title = "Holidays", Description = "my holiday", StartDate = new DateTime(2019, 10, 12, 09, 09, 09), EndDate = new DateTime(2019, 10, 24, 09, 09, 09), Type = EventEnum.Reminder },

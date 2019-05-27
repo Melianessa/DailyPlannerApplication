@@ -39,35 +39,31 @@ namespace DailyPlanner.Web.Controllers
         [HttpPost]
         public async Task<IEnumerable<EventDTO>> GetByDate(string date) //try [FromBody]
         {
-            List<EventDTO> ev = new List<EventDTO>();
+            List<EventDTO> eventList = new List<EventDTO>();
             try
             {
                 var id = User.GetId();
                 string token = HttpContext.Request.Headers["Authorization"];
                 HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
-                //if (date == null)
-                //{
-                //    date = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
-                //}
                 var content = new StringContent(JsonConvert.SerializeObject(date), Encoding.UTF8, "application/json");
                 // or JsonConvert.SerializeObject(date)
                 HttpResponseMessage res = await client.PostAsync("api/event/getByDate", content);
                 if (res.IsSuccessStatusCode)
                 {
                     var result = await res.Content.ReadAsStringAsync();
-                    ev = JsonConvert.DeserializeObject<List<EventDTO>>(result).Where(p => p.UserId == id).OrderBy(p => p.StartDate).ToList();
-                    return ev;
+                    eventList = JsonConvert.DeserializeObject<List<EventDTO>>(result).Where(p => p.UserId == id).OrderBy(p => p.StartDate).ToList();
+                    return eventList;
                 }
                 else
                 {
                     _logger.LogWarning("Error in GetByDate method, response status code is not success");
-                    return ev;
+                    return eventList;
                 }
             }
             catch (Exception e)
             {
                 _logger.LogWarning($"Error in GetByDate method: {e.Message}");
-                return ev;
+                return eventList;
             }
 
         }
@@ -78,28 +74,28 @@ namespace DailyPlanner.Web.Controllers
         [HttpGet]
         public async Task<IEnumerable<Event>> GetAll()
         {
-            List<Event> ev = new List<Event>();
+            List<Event> eventList = new List<Event>();
             try
             {
                 string token = HttpContext.Request.Headers["Authorization"];
                 HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
-                HttpResponseMessage res = await client.GetAsync("api/event/getAll");
+                HttpResponseMessage res = await client.GetAsync("api/event");
                 if (res.IsSuccessStatusCode)
                 {
                     var result = await res.Content.ReadAsStringAsync();
-                    ev = JsonConvert.DeserializeObject<List<Event>>(result).OrderBy(p => p.StartDate).ToList();
-                    return ev;
+                    eventList = JsonConvert.DeserializeObject<List<Event>>(result).OrderBy(p => p.StartDate).ToList();
+                    return eventList;
                 }
                 else
                 {
                     _logger.LogWarning("Error in GetAll method, response status code is not success");
-                    return ev;
+                    return eventList;
                 }
             }
             catch (Exception e)
             {
                 _logger.LogWarning($"Error in GetAll method: {e.Message}");
-                return ev;
+                return eventList;
             }
         }
         /// <summary>
@@ -175,7 +171,7 @@ namespace DailyPlanner.Web.Controllers
         /// <returns>A newly created Event</returns>
         /// <response code="201">Returns the newly created event</response>
         /// <response code="400">If the event is null</response>
-        [HttpPost]
+        
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [HttpPost]
@@ -191,7 +187,7 @@ namespace DailyPlanner.Web.Controllers
                     ev.UserId = authId;
                     var content = new StringContent(JsonConvert.SerializeObject(ev), Encoding.UTF8,
                         "application/json");
-                    HttpResponseMessage res = await client.PostAsync("api/event/post", content);
+                    HttpResponseMessage res = await client.PostAsync("api/event", content);
                     if (res.IsSuccessStatusCode)
                     {
                         return new Response
@@ -239,7 +235,7 @@ namespace DailyPlanner.Web.Controllers
             {
                 string token = HttpContext.Request.Headers["Authorization"];
                 HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
-                HttpResponseMessage res = await client.GetAsync($"api/event/get/{id}");
+                HttpResponseMessage res = await client.GetAsync($"api/event/{id}");
                 if (res.IsSuccessStatusCode)
                 {
                     var result = await res.Content.ReadAsStringAsync();
@@ -276,7 +272,7 @@ namespace DailyPlanner.Web.Controllers
                     string token = HttpContext.Request.Headers["Authorization"];
                     HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
                     var content = new StringContent(JsonConvert.SerializeObject(ev), Encoding.UTF8, "application/json");
-                    HttpResponseMessage res = await client.PutAsync($"api/event/put/{ev.Id}", content);
+                    HttpResponseMessage res = await client.PutAsync($"api/event/{ev.Id}", content);
                     if (res.IsSuccessStatusCode)
                     {
                         var result = await res.Content.ReadAsStringAsync();
@@ -312,7 +308,7 @@ namespace DailyPlanner.Web.Controllers
             {
                 string token = HttpContext.Request.Headers["Authorization"];
                 HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
-                HttpResponseMessage res = await client.DeleteAsync($"api/event/delete/{id}");
+                HttpResponseMessage res = await client.DeleteAsync($"api/event/{id}");
 
                 if (res.IsSuccessStatusCode)
                 {

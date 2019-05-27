@@ -9,7 +9,6 @@ namespace DailyPlanner.Repository
         { }
         public DbSet<Event> Events { get; set; }
         public DbSet<User> Users { get; set; }
-        //public DbSet<PersistedGrant> PersistedGrants { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
         }

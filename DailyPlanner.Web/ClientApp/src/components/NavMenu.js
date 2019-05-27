@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Glyphicon, Nav, Navbar, NavItem } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import "./NavMenu.css";
-import { confirmAlert } from "react-confirm-alert"; // Import
+import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 
 export class NavMenu extends Component {
@@ -17,7 +17,7 @@ export class NavMenu extends Component {
     helperLogout() {
 	    window.token = "";
 	    localStorage.clear();
-	    this.props.history.push("/");
+	    //this.props.history.push("/");
     }
     handleLogout() {
 	    confirmAlert({

@@ -25,26 +25,6 @@ namespace DailyPlanner.Identity
 
     public class PasswordsHelper
     {
-        //public class Policy
-        //{
-        //    public string Description { get; set; }
-        //    public int MinLength { get; set; }
-        //    public int MaxLength { get; set; }
-        //    public string[] WeakList { get; set; }
-
-        //    public void Validate(string password)
-        //    {
-        //        if (string.IsNullOrWhiteSpace(password) || password.Length < MinLength)
-        //            throw new ArgumentOutOfRangeException(nameof(MinLength));
-
-        //        if (password.Length > MaxLength)
-        //            throw new ArgumentOutOfRangeException(nameof(MaxLength));
-
-        //        if (WeakList?.Any(wi => wi.Equals(password, StringComparison.OrdinalIgnoreCase)) == true)
-        //            throw new Exception("Your password is from Top 1000 most common ones");
-        //    }
-        //}
-
         // These constants may be changed without breaking existing hashes.
         private const int SaltBytes = 24;
         private const int HashBytes = 18;
@@ -104,7 +84,6 @@ namespace DailyPlanner.Identity
                 throw new InvalidHashException("Fields are missing from the password hash.");
             }
 
-            // We only support SHA1 with C#.
             if (split[HashAlgorithmIndex] != "sha1")
             {
                 throw new CannotPerformOperationException("Unsupported hash type.");

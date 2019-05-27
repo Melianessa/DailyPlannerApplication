@@ -11,7 +11,6 @@ namespace DailyPlanner.Repository
     public class UserRepository : IUserRepository
     {
         private readonly PlannerDbContext _context;
-        //private static readonly char[] charsToTrim = {' '};
         public UserRepository(PlannerDbContext context)
         {
             _context = context;

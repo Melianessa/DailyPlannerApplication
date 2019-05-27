@@ -69,11 +69,9 @@ export class EditUser extends Component {
         }
         if (propertyName === "sex") {
             this.setState({ selectedSex: event.target.value });
-            //this.state.selectedSex = event.target.value;
         }
         if (propertyName === "role") {
             this.setState({ selectedRole: event.target.value });
-            //this.state.selectedRole = event.target.value;
         }
         this.setState({ user: user });
     }
@@ -108,7 +106,7 @@ export class EditUser extends Component {
                 }
             })
             .then(data => {
-	            var user = data ? data : [];
+                var user = data ? data : [];
                 this.setState({ user: user, redirect: true });
             });
     }

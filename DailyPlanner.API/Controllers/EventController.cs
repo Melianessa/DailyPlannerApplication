@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DailyPlanner.API.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    
     [Authorize]
     public class EventController : ControllerBase
     {
@@ -21,41 +21,39 @@ namespace DailyPlanner.API.Controllers
             _iEventRepo = evRepo;
         }
 
+        [Route("api/[controller]/[action]")]
         [HttpPost]
         public IEnumerable<EventDTO> GetByDate([FromBody] string date)
         {
             return _iEventRepo.GetByDate(date);
         }
-
+        [Route("api/[controller]")]
         [HttpGet]
         public IEnumerable<Event> GetAll()
         {
             return _iRepo.GetAll();
         }
 
-        // GET api/values/5
+        [Route("api/[controller]")]
         [HttpGet("{id}")]
         public Event Get(Guid id)
         {
 
             return _iRepo.Get(id);
         }
-
-        // POST api/values
+        [Route("api/[controller]")]
         [HttpPost]
         public Guid Post([FromBody] EventDTO ev)
         {
             return _iEventRepo.Add(ev);
         }
-
-        // PUT api/values/5
+        [Route("api/[controller]")]
         [HttpPut("{id}")]
         public Event Put([FromBody] Event ev)
         {
             return _iRepo.Update(ev);
         }
-
-        // DELETE api/values/5
+        [Route("api/[controller]")]
         [HttpDelete("{id}")]
         public void Delete(Event ev)
         {

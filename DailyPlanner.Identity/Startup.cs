@@ -30,7 +30,6 @@ namespace DailyPlanner.Identity
             Environment = environment;
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             X509Certificate2 cert = null;
@@ -58,26 +57,6 @@ namespace DailyPlanner.Identity
                 opts.UseSqlServer(Configuration["ConnectionString:DailyPlannerDB"]));
             var builder = services.AddIdentityServer()
                 .AddSigningCredential(cert)
-                //.AddInMemoryClients(new List<Client>
-                //{
-                //    new Client
-                //    {
-                //        ClientId = "DailyPlanner.API",
-                //        ClientSecrets = {new Secret("QFEGrbte46bgbcfht!3cvgfnf".Sha256())},
-                //        AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                //        AllowedScopes =
-                //        {
-                //            "DailyPlanner.API",
-                //            IdentityServerConstants.StandardScopes.Email,
-                //            IdentityServerConstants.StandardScopes.OpenId
-                //        },
-                //        AllowOfflineAccess = false,
-                //        AccessTokenType = AccessTokenType.Jwt,
-                //        // 12 hour
-                //        AccessTokenLifetime = 60 * 60 * 12,
-                //        //AllowedCorsOrigins = Configuration.GetSection("IDP:AllowSpecificOrigin").Get<string[]>()
-                //    }
-                //})
                 .AddInMemoryApiResources(new List<ApiResource>
                 {
                     new ApiResource("DailyPlanner.API", "Daily Planner")
@@ -96,23 +75,16 @@ namespace DailyPlanner.Identity
                         Scopes = new[]
                         {
                             new Scope("DailyPlanner.Web", "Daily Planner"),
-                            //new Scope(IdentityServerConstants.StandardScopes.Email),
-                            //new Scope(IdentityServerConstants.StandardScopes.Profile),
-                            //new Scope(IdentityServerConstants.StandardScopes.Phone),
-                            //new Scope(IdentityServerConstants.StandardScopes.OpenId)
                         }
                     }
                 })
                 .AddProfileService<ProfileService>()
                 .AddClientStore<ClientStore>();
 
-            //services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
             services.AddTransient<IResourceOwnerPasswordValidator, ResourceOwnerPasswordValidator>();
-
             services.AddScoped<UserAuthRepository>();
             services.AddScoped<UserRepository>();
-            //services.AddScoped<PersistedGrantRepository>();
-
+            
             if (Environment.IsDevelopment())
             {
                 //builder.AddDeveloperSigningCredential();
@@ -167,7 +139,7 @@ namespace DailyPlanner.Identity
             //});
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
-        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {

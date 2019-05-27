@@ -23,12 +23,12 @@ namespace DailyPlanner.Web.Controllers
     {
         IdentityHelper _apiBaseURI;
         private readonly ILogger _logger;
-        
+
         public AccountController(ILogger<UserController> logger, IConfiguration configuration)
         {
             _logger = logger;
             _apiBaseURI = new IdentityHelper(configuration);
-            
+
 
         }
         [HttpPost]
@@ -155,7 +155,7 @@ namespace DailyPlanner.Web.Controllers
                 string token = HttpContext.Request.Headers["Authorization"];
                 HttpClient client = _apiBaseURI.InitializeClient(token?.ToReadableToken());
                 var id = User.GetClientId();
-                
+
                 await HttpContext.SignOutAsync("Cookies");
                 await HttpContext.SignOutAsync("oidc");
                 await HttpContext.SignOutAsync("Bearer");
@@ -166,8 +166,6 @@ namespace DailyPlanner.Web.Controllers
                 //var postLogoutRedirectUri = "http://localhost:50472";
                 ////var req = new HttpRequestMessage(HttpMethod.Get, $"connect/endsession?id_token_hint={idTokenHint}&post_logout_redirect_uri={postLogoutRedirectUri}");
                 ////var res = await client.SendAsync(req);
-                //var len =
-                //    $"http://localhost:5000/connect/endsession?id_token_hint={idTokenHint}&post_logout_redirect_uri={postLogoutRedirectUri}";
                 //var postLogoutRedirectUriNew = System.Web.HttpUtility.UrlEncode(postLogoutRedirectUri);
                 //HttpResponseMessage res = await client.GetAsync($"connect/endsession?id_token_hint={idTokenHint}&post_logout_redirect_uri={postLogoutRedirectUriNew}");
                 //if (res.IsSuccessStatusCode)
@@ -192,11 +190,6 @@ namespace DailyPlanner.Web.Controllers
             catch (Exception e)
             {
                 _logger.LogWarning($"Error in Logout method: {e.Message}");
-                //return new Response()
-                //{
-                //    IsSuccess = false,
-                //    ErrorMessage = $"{e.Message}, {e.InnerException.Message}"
-                //};
             }
         }
     }

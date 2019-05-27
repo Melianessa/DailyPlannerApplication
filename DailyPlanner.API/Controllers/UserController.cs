@@ -12,9 +12,7 @@ namespace DailyPlanner.API.Controllers
     [Authorize]
     public class UserController : ControllerBase
     {
-        // GET api/values
         private readonly IUserRepository _iRepo;
-
         public UserController(IUserRepository repo)
         {
             _iRepo = repo;
@@ -30,12 +28,6 @@ namespace DailyPlanner.API.Controllers
         {
             return _iRepo.GetAllUsers();
         }
-        // GET api/values/5
-        //[HttpGet("{id}")]
-        //public User Get(Guid id)
-        //{
-        //    return _iRepo.Get(id);
-        //}
         
         [HttpGet("{id}")]
         public UserDTO GetUser(Guid id)
@@ -43,7 +35,6 @@ namespace DailyPlanner.API.Controllers
             return _iRepo.GetUser(id);
         }
 
-        // POST api/values
         
         [HttpPost]
         public Guid Post([FromBody] User user)
@@ -51,14 +42,12 @@ namespace DailyPlanner.API.Controllers
             return _iRepo.Add(user);
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
+       [HttpPut("{id}")]
         public User Put([FromBody] User user)
         {
             return _iRepo.Update(user);
         }
 
-        // DELETE api/values/5
         [HttpDelete("{id}")]
         public void Delete(User b)
         {

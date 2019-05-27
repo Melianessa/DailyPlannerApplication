@@ -24,40 +24,40 @@ export class EditEvent extends Component {
             endDate: new Date(),
             loading: true,
             offset: new Date().getTimezoneOffset(),
-            status:""
+            status: ""
         }
         this.startPage = this.startPage.bind(this);
         this.startPage(this.props.match.params.id);
     }
     startPage(id) {
         fetch("api/event/edit/" + id,
-		        {
-			        method: "GET",
-			        headers: {
-				        "Accept": "application/json",
-				        "Content-Type": "application/json",
-				        "Authorization": window.token
-			        }
-		        })
-	        .then(response => {
-		        console.log(response);
-		        if (response.ok) {
-			        return response.json();
-		        } else if (response.status === 401) {
-			        this.setState({
-				        status: response.statusText
-			        });
-		        }
-	        }).then(data => {
-		        var event = data ? data : [];
-		        let startMinutes = new Date(event.startDate).setMinutes(new Date(event.startDate).getMinutes() - this.state.offset);
+            {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "Authorization": window.token
+                }
+            })
+            .then(response => {
+                console.log(response);
+                if (response.ok) {
+                    return response.json();
+                } else if (response.status === 401) {
+                    this.setState({
+                        status: response.statusText
+                    });
+                }
+            }).then(data => {
+                var event = data ? data : [];
+                let startMinutes = new Date(event.startDate).setMinutes(new Date(event.startDate).getMinutes() - this.state.offset);
                 let endMinutes = new Date(event.endDate).setMinutes(new Date(event.endDate).getMinutes() - this.state.offset);
                 event.startDate = new Date(startMinutes).toISOString();
                 event.endDate = new Date(endMinutes).toISOString();
                 this.setState({
                     event: event, loading: false, selectedType: event.type
                 });
-                });
+            });
     }
     handleChange(propertyName, e) {
         const event = this.state.event;
@@ -67,8 +67,7 @@ export class EditEvent extends Component {
             event[propertyName] = e.target.value;
         }
         if (propertyName === "type") {
-            this.setState({ selectedType : e.target.value});
-	        //this.state.selectedType = e.target.value;
+            this.setState({ selectedType: e.target.value });
         }
         this.setState({ event: event });
     }
@@ -82,18 +81,18 @@ export class EditEvent extends Component {
             Id: this.state.event.id
         }
         fetch("api/event/edit/" + id,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json",
-                        "Authorization": window.token
-                    },
-                    body: JSON.stringify(body)
-                }).then((response) => response.json())
+            {
+                method: "PUT",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "Authorization": window.token
+                },
+                body: JSON.stringify(body)
+            }).then((response) => response.json())
             .then(data => {
                 this.setState({ event: data, redirect: true });
-                });
+            });
     }
     handleCancel() {
         this.props.history.push("/event/list");
@@ -107,12 +106,12 @@ export class EditEvent extends Component {
         }
     }
     renderEditForm(event) {
-	    if (!event || event.length === 0) {
-		    return <div>
+        if (!event || event.length === 0) {
+            return <div>
                 Event is empty
             </div>;
-	    }
-	    return <div>
+        }
+        return <div>
             <div className="form-group row">
                 <label className=" control-label col-md-12">Title:</label>
                 <div className="col-md-4">
@@ -182,7 +181,7 @@ export class EditEvent extends Component {
             ? <p><em>Loading...</em></p>
             : this.renderEditForm(this.state.event);
         if (this.state.status === "Unauthorized") {
-	        return <div>
+            return <div>
                 <div>
                     You are {this.state.status.toLowerCase()}! Please <Link to="/account/login">login</Link> or <Link to="/account/register">register</Link> to continue :)
                 </div>

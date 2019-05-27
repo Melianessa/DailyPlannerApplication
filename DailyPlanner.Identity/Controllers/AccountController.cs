@@ -22,7 +22,6 @@ namespace DailyPlanner.Identity.Controllers
         public string ExpirationTime { get; set; }
     }
 
-    //[Authorize]
     [Route("[controller]/[action]")]
     public class AccountController : Controller
     {

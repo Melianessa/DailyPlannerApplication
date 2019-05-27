@@ -25,7 +25,6 @@ namespace DailyPlanner.Web
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication("Bearer")
@@ -69,7 +68,6 @@ namespace DailyPlanner.Web
                     ))).AddApiExplorer().AddJsonFormatters().AddAuthorization();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             File.WriteAllText((Path.Combine(Directory.GetCurrentDirectory(), "logger.txt")), String.Empty);
@@ -92,12 +90,6 @@ namespace DailyPlanner.Web
             app.UseCookiePolicy();
             app.UseSpaStaticFiles();
             app.UseAuthentication();
-            //app.UseMvc(routes =>
-            //{
-            //    routes.MapRoute(
-            //        name: "default",
-            //        template: "{controller}/{action=Index}/{id?}");
-            //});
             app.UseMvc();
             app.UseSpa(spa =>
             {

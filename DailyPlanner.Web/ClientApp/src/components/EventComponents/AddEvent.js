@@ -52,9 +52,7 @@ export class AddEvent extends Component {
             StartDate: this.state.startDate,
             EndDate: this.state.endDate
         }
-        //this.setState({ redirect: true });
-        //setTimeout(() => {
-        //    this.setState({ redirect: true })}, 2000);
+        
         fetch("api/event/create",
             {
                 method: "POST",
@@ -64,7 +62,7 @@ export class AddEvent extends Component {
                     "Authorization": window.token
                 },
                 body: JSON.stringify(body)
-            })//.then(NotificationManager.success('Success message', 'Event successfully added!', 3000))
+            })
 	        .then(response => {
 		        console.log(response);
 		        if (response.ok) {

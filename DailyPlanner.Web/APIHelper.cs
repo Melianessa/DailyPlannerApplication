@@ -32,11 +32,4 @@ namespace DailyPlanner.Web
             return _client;
         }
     }
-    
-    //public class UserHelper
-    //{
-    //    public Guid EventId { get; set; }
-    //    public User User { get; set; }
-    //    public List<Event> UserEvent { get; set; }
-    //}
 }
