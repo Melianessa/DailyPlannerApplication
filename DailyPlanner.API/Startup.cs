@@ -23,6 +23,7 @@ namespace DailyPlanner.API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services.AddAuthentication("Bearer")
                 .AddIdentityServerAuthentication(options =>
                 {
@@ -37,7 +38,13 @@ namespace DailyPlanner.API
             services.AddScoped<DbContext, PlannerDbContext>();
             services.AddDbContext<PlannerDbContext>(opts =>
                 opts.UseSqlServer(Configuration["ConnectionString:DailyPlannerDB"]));
-            services.AddMvcCore().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonFormatters().AddAuthorization();
+            services.AddMvcCore().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonFormatters()
+                .AddAuthorization(
+                opt => opt.AddPolicy("Client", policy => policy.RequireClaim("Role", "Client"
+                   )))
+                .AddAuthorization(
+                opt => opt.AddPolicy("Admin", policy => policy.RequireClaim("Role", "Admin"
+                   )));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

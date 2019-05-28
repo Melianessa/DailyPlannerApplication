@@ -27,6 +27,7 @@ namespace DailyPlanner.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services.AddAuthentication("Bearer")
                 .AddIdentityServerAuthentication(options =>
                 {
@@ -65,7 +66,9 @@ namespace DailyPlanner.Web
             services.AddMvcCore(config =>
                 config.Filters.Add(
                     typeof(DailyPlannerExceptionFilterAttribute
-                    ))).AddApiExplorer().AddJsonFormatters().AddAuthorization();
+                    ))).AddApiExplorer().AddJsonFormatters()
+                    .AddAuthorization(opt => opt.AddPolicy("Client", policy => policy.RequireClaim("role", "Client")))
+                    .AddAuthorization(opt => opt.AddPolicy("Admin", policy => policy.RequireClaim("role", "Admin"))); ;
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

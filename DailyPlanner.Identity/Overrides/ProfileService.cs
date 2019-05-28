@@ -23,7 +23,7 @@ namespace DailyPlanner.Identity.Overrides
         {
             context.IssuedClaims.Add(new Claim("sub", context.Subject.Claims.FirstOrDefault(cl => cl.Type == "sub")?.Value));
             context.IssuedClaims.Add(new Claim("email", context.Subject.Claims.FirstOrDefault(cl => cl.Type == "email")?.Value));
-
+            context.IssuedClaims.Add(new Claim("role", context.Subject.Claims.FirstOrDefault(cl => cl.Type == "role")?.Value));
             return Task.FromResult(0);
         }
 

@@ -40,7 +40,8 @@ namespace DailyPlanner.Identity.Overrides
                     context.Result = new GrantValidationResult(user.Id.ToString(), context.Request.GrantType, DateTime.UtcNow, new[]
                     {
                         new Claim("sub", user.Id.ToString()),
-                        new Claim("email", user.Email)
+                        new Claim("email", user.Email),
+                        new Claim("role", user.Role.ToString())
                     });
                 else
                 {

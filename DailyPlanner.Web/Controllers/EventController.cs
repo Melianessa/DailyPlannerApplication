@@ -110,7 +110,7 @@ namespace DailyPlanner.Web.Controllers
             {
                 string token = HttpContext.Request.Headers["Authorization"];
                 HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
-                HttpResponseMessage res = await client.GetAsync($"api/event/{id}");
+                HttpResponseMessage res = await client.GetAsync($"api/event/get/{id}");
                 if (res.IsSuccessStatusCode)
                 {
                     var result = res.Content.ReadAsStringAsync().Result;
@@ -235,7 +235,7 @@ namespace DailyPlanner.Web.Controllers
             {
                 string token = HttpContext.Request.Headers["Authorization"];
                 HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
-                HttpResponseMessage res = await client.GetAsync($"api/event/{id}");
+                HttpResponseMessage res = await client.GetAsync($"api/event/get/{id}");
                 if (res.IsSuccessStatusCode)
                 {
                     var result = await res.Content.ReadAsStringAsync();

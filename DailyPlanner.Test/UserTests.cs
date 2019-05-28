@@ -38,15 +38,15 @@ namespace DailyPlanner.Test
             context.Users.AddRange(users);
             context.SaveChanges();
         }
-        [TestMethod]
-        public void GetAllUsers_Test()
-        {
-            var controller = new UserController(_userRepository);
-            //Act  
-            var data = controller.GetAll().OrderBy(p => p.FirstName).ToList();
-            //Assert  
-            Assert.AreEqual(data[0].FirstName, users[0].FirstName);
-        }
+        //[TestMethod]
+        //public void GetAllUsers_Test()
+        //{
+        //    var controller = new UserController(_userRepository);
+        //    //Act  
+        //    var data = controller.GetAll().OrderBy(p => p.FirstName).ToList();
+        //    //Assert  
+        //    Assert.AreEqual(data[0].FirstName, users[0].FirstName);
+        //}
         [TestMethod]
         public void AddUser_Test()
         {

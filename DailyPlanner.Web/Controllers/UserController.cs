@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -10,7 +9,6 @@ using DailyPlanner.DomainClasses.Models;
 using DailyPlanner.Helpers;
 using DailyPlanner.Identity.Controllers;
 using DailyPlanner.Web.Filters;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,8 +18,8 @@ using Newtonsoft.Json;
 
 namespace DailyPlanner.Web.Controllers
 {
-    [Authorize]
-    
+    [Route("api/[controller]/[action]")]
+    [Authorize(Roles = "Admin")]
     public class UserController : Controller
     {
         private readonly APIHelper _userAPI;
@@ -36,7 +34,6 @@ namespace DailyPlanner.Web.Controllers
         /// Get all Users.
         /// </summary>
         /// <returns>A list of users</returns>
-        [Route("api/[controller]/[action]")]
         [HttpGet]
         [ServiceFilter(typeof(DailyPlannerExceptionFilterAttribute))]
         public async Task<IEnumerable<UserDTO>> GetAllUsers()
@@ -45,7 +42,7 @@ namespace DailyPlanner.Web.Controllers
             {
                 string token = HttpContext.Request.Headers["Authorization"];
                 HttpClient client = _userAPI.InitializeClient(token?.ToReadableToken());
-                HttpResponseMessage res = await client.GetAsync("api/user/getAllUsers");
+                HttpResponseMessage res = await client.GetAsync("api/user");
                 if (res.IsSuccessStatusCode)
                 {
                     var result = await res.Content.ReadAsStringAsync();
@@ -68,7 +65,6 @@ namespace DailyPlanner.Web.Controllers
         /// Get all Users.
         /// </summary>
         /// <returns>A list of users</returns>
-        [Route("api/[controller]")]
         [HttpGet]
         public async Task<IEnumerable<User>> GetAll()
         {
@@ -100,7 +96,6 @@ namespace DailyPlanner.Web.Controllers
         /// </summary>
         /// <param name="id">The user id to search for</param>
         /// <returns>A user information</returns>
-        [Route("api/[controller]")]
         [HttpGet]
         public async Task<UserDTO> GetUser()
         {
@@ -159,7 +154,6 @@ namespace DailyPlanner.Web.Controllers
         /// <returns>A newly created User</returns>
         /// <response code="201">Returns the newly created user</response>
         /// <response code="400">If the user is null</response>
-        [Route("api/[controller]")]
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
@@ -217,7 +211,7 @@ namespace DailyPlanner.Web.Controllers
         /// Edit a specific User.
         /// </summary>
         /// <param name="id">The user id to edit for</param>
-        [Route("api/[controller]")]
+
         [HttpGet("{id}")]
         public async Task<UserDTO> Edit(Guid id)
         {
@@ -249,7 +243,6 @@ namespace DailyPlanner.Web.Controllers
         /// Edit a specific User.
         /// </summary>
         /// <param name="user">The user to edit for</param>
-        [Route("api/[controller]")]
         [HttpPut("{id}")]
         public async Task<User> Edit([FromBody]User user)
         {
@@ -289,7 +282,6 @@ namespace DailyPlanner.Web.Controllers
         /// Deletes a specific User.
         /// </summary>
         /// <param name="id">The user id to delete for</param>
-        [Route("api/[controller]")]
         [HttpDelete("{id}")]
         public async Task<Response> Delete(Guid id)
         {

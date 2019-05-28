@@ -34,7 +34,7 @@ namespace DailyPlanner.API.Controllers
             return _iRepo.GetAll();
         }
 
-        [Route("api/[controller]")]
+        [Route("api/[controller]/[action]/{id}")]
         [HttpGet("{id}")]
         public Event Get(Guid id)
         {
@@ -47,13 +47,13 @@ namespace DailyPlanner.API.Controllers
         {
             return _iEventRepo.Add(ev);
         }
-        [Route("api/[controller]")]
+        [Route("api/[controller]/{id}")]
         [HttpPut("{id}")]
         public Event Put([FromBody] Event ev)
         {
             return _iRepo.Update(ev);
         }
-        [Route("api/[controller]")]
+        [Route("api/[controller]/{id}")]
         [HttpDelete("{id}")]
         public void Delete(Event ev)
         {

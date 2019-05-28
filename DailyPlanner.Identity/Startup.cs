@@ -76,15 +76,16 @@ namespace DailyPlanner.Identity
                         {
                             new Scope("DailyPlanner.Web", "Daily Planner"),
                         }
-                    }
-                })
+                    },
+                                    })
+                .AddInMemoryIdentityResources(new List<IdentityResource> { new IdentityResource("role", new[] { "role" }) })
                 .AddProfileService<ProfileService>()
                 .AddClientStore<ClientStore>();
 
             services.AddTransient<IResourceOwnerPasswordValidator, ResourceOwnerPasswordValidator>();
             services.AddScoped<UserAuthRepository>();
             services.AddScoped<UserRepository>();
-            
+
             if (Environment.IsDevelopment())
             {
                 //builder.AddDeveloperSigningCredential();

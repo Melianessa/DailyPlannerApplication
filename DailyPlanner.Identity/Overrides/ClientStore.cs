@@ -31,6 +31,7 @@ namespace DailyPlanner.Identity.Overrides
                 {
                     "DailyPlanner.API",
                     "DailyPlanner.Web",
+                    "role",
                     IdentityServerConstants.StandardScopes.Profile,
                     IdentityServerConstants.StandardScopes.Phone,
                     IdentityServerConstants.StandardScopes.OpenId,
