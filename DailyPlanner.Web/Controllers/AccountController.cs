@@ -123,7 +123,7 @@ namespace DailyPlanner.Web.Controllers
                         return new Response
                         {
                             IsSuccess = false,
-                            StatusCode = StatusCodes.Status400BadRequest,
+                            StatusCode = StatusCodes.Status500InternalServerError,
                             ErrorMessage = "Response status code is not success"
                         };
                     }

@@ -4,21 +4,22 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../NavMenu.css";
 import "../style.css";
 import "react-confirm-alert/src/react-confirm-alert.css";
-import { NavMenu } from "../NavMenu"
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { NotificationContainer, NotificationManager } from "react-notifications";
 
 
 export class Login extends Component {
     static displayName = Login.name;
     constructor(props) {
         super(props);
-        
+
         this.state = {
             user: [],
             login: "",
             password: "",
             loading: false,
             isSuccess: false,
-            redirect: false
+            redirect: false            
         }
         this.handleClick = this.handleClick.bind(this);
     }
@@ -59,6 +60,9 @@ export class Login extends Component {
                 });
                 if (this.state.isSuccess) {
                     this.setState({ redirect: true });
+                }
+                else {
+                    NotificationManager.error("Error message", `Invalid login or/and password`, 3000);
                 }
             });
     }
@@ -102,6 +106,7 @@ export class Login extends Component {
             <div>
                 <h1>Login</h1>
                 {contents}
+                <NotificationContainer />
             </div>
         );
     }

@@ -52,13 +52,18 @@ namespace DailyPlanner.Identity.Controllers
                     };
 
                     await userRep.Add(user);
+                    return new Response
+                    {
+                        IsSuccess = true,
+                        StatusCode = StatusCodes.Status200OK,
+                        UserId = user.Id
+                    };
                 }
-
                 return new Response
                 {
-                    IsSuccess = true,
-                    StatusCode = StatusCodes.Status200OK,
-                    UserId = user.Id
+                    IsSuccess = false,
+                    StatusCode = StatusCodes.Status500InternalServerError,
+                    ErrorMessage = "User with this email already exist"
                 };
             }
             catch (Exception ex)

@@ -59,11 +59,8 @@ export class Logout extends Component {
     }
     renderLogout() {
         return <div>
-            <div className="form-group row">
-                
-                <div className="col-md-4">
-                    <label className=" control-label col-md-12">You are successfully logout </label>
-                </div>
+            <div className="col-md-4">
+                <label className=" control-label col-md-12">You are successfully logout </label>
             </div>
             {this.renderRedirect()}
         </div>;
@@ -72,6 +69,8 @@ export class Logout extends Component {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
             : this.renderLogout();
+
+
         return (
             <div>
                 <h1>Logout</h1>

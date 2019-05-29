@@ -59,9 +59,8 @@ export class EventList extends Component {
                 events: events, loading: false
             });
             if (this.props.location.state && this.props.location.state.actionMessage) {
-                NotificationManager.success("Success message", `Event successfully ${this.props.location.state.actionMessage}!`, 3000, () => {
-                    this.props.location.state.actionMessage = null;
-                });
+                NotificationManager.success("Success message", `Event successfully ${this.props.location.state.actionMessage}!`, 3000);
+                this.props.location.state.actionMessage = null;
                 console.log(this.props.location);
             }
         });
@@ -176,6 +175,13 @@ export class EventList extends Component {
             return <div>
                 <div>
                     You are {this.state.status.toLowerCase()}! Please <Link to="/account/login">login</Link> or <Link to="/account/register">register</Link> to continue :)
+                </div>
+            </div>;
+        }
+        if (this.state.status === "Forbidden") {
+            return <div>
+                <div>
+                    You haven't access to this page :)
                 </div>
             </div>;
         }

@@ -15,25 +15,25 @@ export class NavMenu extends Component {
         this.helperLogout = this.helperLogout.bind(this);
     }
     helperLogout() {
-	    window.token = "";
-	    localStorage.clear();
-	    //this.props.history.push("/");
+        window.token = "";
+        localStorage.clear();
+        //this.props.history.push("/");
     }
     handleLogout() {
-	    confirmAlert({
-		    title: "Confirm to submit",
-		    message: "Do you want to logout?",
-		    buttons: [
-			    {
-				    label: "Yes",
-				    onClick: () => this.helperLogout()
-			    },
-			    {
-				    label: "No",
-				    onClick: () => { return; }
-			    }
-		    ]
-	    });
+        confirmAlert({
+            title: "Confirm to submit",
+            message: "Do you want to logout?",
+            buttons: [
+                {
+                    label: "Yes",
+                    onClick: () => this.helperLogout()
+                },
+                {
+                    label: "No",
+                    onClick: () => { return; }
+                }
+            ]
+        });
     }
     renderLoginData() {
         if (this.state.render) {
@@ -60,8 +60,10 @@ export class NavMenu extends Component {
                     </Navbar.Brand>
                     <NavItem>
                         <Link to={"/account/login"}>Login</Link>
-                        <Link to={"/account/register"}>Register</Link>
                         <Link to={"/logout"} onClick={() => this.handleLogout()}>Logout</Link>
+                    </NavItem>
+                    <NavItem>
+                        <Link to={"/account/register"}>Register</Link>
                     </NavItem>
                     <Navbar.Toggle />
                 </Navbar.Header>

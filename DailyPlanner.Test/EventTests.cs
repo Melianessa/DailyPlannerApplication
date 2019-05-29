@@ -19,9 +19,9 @@ namespace DailyPlanner.Test
         //TODO: add negative cases
         readonly Event[] _events = new[]
             {
-             new Event() { Id=Guid.NewGuid(), Title = "Holidays", Description = "my holiday", StartDate = new DateTime(2019, 10, 12, 09, 09, 09), EndDate = new DateTime(2019, 10, 24, 09, 09, 09), Type = EventEnum.Reminder },
-             new Event() { Id=Guid.NewGuid(), Title = "Wedding", Description = "my wedding", StartDate = new DateTime(2018, 10, 12, 09, 09, 09), EndDate = new DateTime(2018, 10, 24, 09, 09, 09), Type = EventEnum.Event },
-             new Event() { Id=Guid.NewGuid(), Title = "Work", Description = "my work", StartDate = new DateTime(2019, 10, 12, 09, 09, 09), EndDate = new DateTime(2019, 10, 27, 09, 09, 09), Type = EventEnum.Task }
+             new Event() { Id=Guid.NewGuid(), Title = "Holidays", Description = "my holiday", StartDate = new DateTime(2019, 10, 12, 09, 09, 09), EndDate = new DateTime(2019, 10, 24, 09, 09, 09), Type = EventEnum.Reminder, User=new User{Id = Guid.NewGuid(), FirstName = "Alex", LastName = "Brown", DateOfBirth = new DateTime(1996, 08, 12), Email = "al@r.ua", Phone = "3333333", Role = RoleEnum.Admin, Sex = true } },
+             new Event() { Id=Guid.NewGuid(), Title = "Wedding", Description = "my wedding", StartDate = new DateTime(2018, 10, 12, 09, 09, 09), EndDate = new DateTime(2018, 10, 24, 09, 09, 09), Type = EventEnum.Event, User=new User{Id = Guid.NewGuid(), FirstName = "Alex", LastName = "Brown", DateOfBirth = new DateTime(1996, 08, 12), Email = "al@r.ua", Phone = "3333333", Role = RoleEnum.Admin, Sex = true } },
+             new Event() { Id=Guid.NewGuid(), Title = "Work", Description = "my work", StartDate = new DateTime(2019, 10, 12, 09, 09, 09), EndDate = new DateTime(2019, 10, 27, 09, 09, 09), Type = EventEnum.Task, User=new User{Id = Guid.NewGuid(), FirstName = "Alex", LastName = "Brown", DateOfBirth = new DateTime(1996, 08, 12), Email = "al@r.ua", Phone = "3333333", Role = RoleEnum.Admin, Sex = true } }
             }.OrderBy(p => p.Title).ToArray();
         private readonly EventRepository _eventRepository;
         public static DbContextOptions<PlannerDbContext> DbContextOptions { get; }
@@ -46,7 +46,7 @@ namespace DailyPlanner.Test
         {
             var controller = new EventController(_eventRepository, _eventRepository);
             //Act  
-            var data = controller.GetByDate(new DateTime(2019, 10, 12, 09, 09, 09).Date.ToString(CultureInfo.InvariantCulture)).OrderBy(p => p.Title).ToList();
+            var data = _eventRepository.GetByDate(new DateTime(2019, 10, 12, 09, 09, 09).Date.ToString()).OrderBy(p => p.Title).ToList();
             //Assert  
             Assert.AreEqual(data[0].Title, _events[0].Title);
         }
@@ -85,10 +85,10 @@ namespace DailyPlanner.Test
         public void DeleteEvent_Test()
         {
             var controller = new EventController(_eventRepository, _eventRepository);
-            var firstLength = _events.Length;
+            var firstLength = controller.GetByDate(new DateTime(2019, 10, 12, 09, 09, 09).Date.ToString(CultureInfo.InvariantCulture)).ToList().Count();
             //Act
             controller.Delete(_events[0]);
-            var secondLength = controller.GetAll().Count();
+            var secondLength = controller.GetByDate(new DateTime(2019, 10, 12, 09, 09, 09).Date.ToString(CultureInfo.InvariantCulture)).ToList().Count();
             //Assert
             Assert.AreNotEqual(firstLength,secondLength);
         }

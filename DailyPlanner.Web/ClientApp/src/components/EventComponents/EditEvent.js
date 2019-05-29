@@ -7,6 +7,8 @@ import "../style.css";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { staticData } from "../Context";
 import { Link } from "react-router-dom";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { NotificationContainer, NotificationManager } from "react-notifications";
 
 export class EditEvent extends Component {
     static displayName = EditEvent.name;
@@ -72,27 +74,35 @@ export class EditEvent extends Component {
         this.setState({ event: event });
     }
     handleClick(id) {
-        let body = {
-            Title: this.state.event.title,
-            Description: this.state.event.description,
-            Type: this.state.selectedType,
-            StartDate: this.state.event.startDate,
-            EndDate: this.state.event.endDate,
-            Id: this.state.event.id
+        const { title, startDate, endDate } = this.state.event;
+        const { selectedType} = this.state;
+        if (!title || selectedType==="undefined" || !startDate || !endDate) {
+            this.setState({ isValid: false });
+            NotificationManager.error("Error message", `All fields required`, 2000);
         }
-        fetch("api/event/edit/" + id,
-            {
-                method: "PUT",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                    "Authorization": window.token
-                },
-                body: JSON.stringify(body)
-            }).then((response) => response.json())
-            .then(data => {
-                this.setState({ event: data, redirect: true });
-            });
+        else {
+            let body = {
+                Title: this.state.event.title,
+                Description: this.state.event.description,
+                Type: this.state.selectedType,
+                StartDate: this.state.event.startDate,
+                EndDate: this.state.event.endDate,
+                Id: this.state.event.id
+            }
+            fetch("api/event/edit/" + id,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json",
+                        "Authorization": window.token
+                    },
+                    body: JSON.stringify(body)
+                }).then((response) => response.json())
+                .then(data => {
+                    this.setState({ event: data, redirect: true });
+                });
+        }
     }
     handleCancel() {
         this.props.history.push("/event/list");
@@ -187,11 +197,19 @@ export class EditEvent extends Component {
                 </div>
             </div>;
         }
+        if (this.state.status === "Forbidden") {
+            return <div>
+                <div>
+                    You haven't access to this page :)
+                </div>
+            </div>;
+        }
         return (
             <div>
                 <h1>Edit event</h1>
                 <p>Edit the following fields.</p>
                 {contents}
+                <NotificationContainer />
             </div>
         );
     }

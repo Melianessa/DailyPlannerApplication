@@ -94,7 +94,6 @@ namespace DailyPlanner.Web.Controllers
         /// <summary>
         /// Get a specific User.
         /// </summary>
-        /// <param name="id">The user id to search for</param>
         /// <returns>A user information</returns>
         [HttpGet]
         public async Task<UserDTO> GetUser()

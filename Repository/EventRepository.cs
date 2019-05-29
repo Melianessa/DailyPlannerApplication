@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DailyPlanner.Repository
 {
-    public class EventRepository : IDataRepository<Event>, IEventBase<EventDTO>
+    public class EventRepository : IEventBase
     {
         private readonly PlannerDbContext _context;
 
@@ -17,14 +17,10 @@ namespace DailyPlanner.Repository
         {
             _context = context;
         }
-        public IEnumerable<Event> GetAll()
-        {
-            return _context.Events.ToList();
-        }
         public IEnumerable<EventDTO> GetByDate(string date)
         {
             var d = DateTime.Parse(date, CultureInfo.InvariantCulture);
-            return _context.Events.Include(p=>p.User).Where(p => p.StartDate.Date == d.Date).Select(p=>new EventDTO(p)).ToList();
+            return _context.Events.Include(p => p.User).Where(p => p.StartDate.Date == d.Date).Select(p => new EventDTO(p)).ToList();
         }
 
         public Event Get(Guid id)

@@ -7,6 +7,9 @@ import "../style.css";
 import { staticData } from "../Context";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { Link } from "react-router-dom";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { NotificationContainer, NotificationManager } from "react-notifications";
+
 
 export class EditUser extends Component {
     static displayName = EditUser.name;
@@ -76,39 +79,52 @@ export class EditUser extends Component {
         this.setState({ user: user });
     }
     handleClick(id) {
-        let body = {
-            FirstName: this.state.user.firstName,
-            LastName: this.state.user.lastName,
-            DateOfBirth: this.state.user.dateOfBirth,
-            Phone: this.state.user.phone,
-            Email: this.state.user.email,
-            Sex: this.state.selectedSex,
-            Role: this.state.selectedRole,
-            Id: this.state.user.id
+        const { firstName, lastName, dateOfBirth, phone, email } = this.state.user;
+        const { selectedSex, selectedRole } = this.state;
+        var isCorrectEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(email);
+        if (!isCorrectEmail) {
+            NotificationManager.error("Error message", `Email is invalid`, 2000);
         }
-        fetch("api/user/edit/" + id,
-            {
-                method: "PUT",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                    "Authorization": window.token
-                },
-                body: JSON.stringify(body)
-            }).then(response => {
-                console.log(response);
-                if (response.ok) {
-                    return response.json();
-                } else if (response.status === 401) {
-                    this.setState({
-                        status: response.statusText
-                    });
-                }
-            })
-            .then(data => {
-                var user = data ? data : [];
-                this.setState({ user: user, redirect: true });
-            });
+        if (!firstName || !lastName || !dateOfBirth || !phone || !email || selectedSex !== true && selectedSex !== false || selectedRole==="undefined") {
+            this.setState({ isValid: false });
+            NotificationManager.error("Error message", `All fields must be filled`, 2000);
+        }
+        else {
+            let body = {
+                FirstName: this.state.user.firstName,
+                LastName: this.state.user.lastName,
+                DateOfBirth: this.state.user.dateOfBirth,
+                Phone: this.state.user.phone,
+                Email: this.state.user.email,
+                Sex: this.state.selectedSex,
+                Role: this.state.selectedRole,
+                Id: this.state.user.id
+            }
+            fetch("api/user/edit/" + id,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json",
+                        "Authorization": window.token
+                    },
+                    body: JSON.stringify(body)
+                }).then(response => {
+                    console.log(response);
+                    if (response.ok) {
+                        return response.json();
+                    } else if (response.status === 401) {
+                        this.setState({
+                            status: response.statusText
+                        });
+                    }
+                })
+                .then(data => {
+                    var user = data ? data : [];
+                    this.setState({ user: user, redirect: true });
+                });
+        }
+
     }
     handleCancel() {
         this.props.history.push("/user/list");
@@ -224,8 +240,8 @@ export class EditUser extends Component {
             <div>
                 <h1>Edit user</h1>
                 <p>Edit the following fields.</p>
-
                 {contents}
+                <NotificationContainer />
             </div>
         );
     }

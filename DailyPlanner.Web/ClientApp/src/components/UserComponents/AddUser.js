@@ -4,6 +4,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import { staticData } from "../Context";
 import { Link } from "react-router-dom";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { NotificationContainer, NotificationManager } from "react-notifications";
 
 
 export class AddUser extends Component {
@@ -21,7 +23,9 @@ export class AddUser extends Component {
             role: roleList,
             selectedRole: null,
             selectedSex: null,
-            redirect: false
+            redirect: false,
+            isValid: true,
+
         }
         this.handleChangeFName = this.handleChangeFName.bind(this);
         this.handleChangeLName = this.handleChangeLName.bind(this);
@@ -57,38 +61,48 @@ export class AddUser extends Component {
         this.setState({ selectedRole: newRole });
     }
     handleClick() {
-        let body = {
-            FirstName: this.state.firstName,
-            LastName: this.state.lastName,
-            DateOfBirth: this.state.dateOfBirth,
-            Phone: this.state.phone,
-            Email: this.state.email,
-            Sex: this.state.selectedSex,
-            Role: this.state.selectedRole,
-            status: ""
+        const { firstName, lastName, dateOfBirth, phone, email, selectedSex, selectedRole } = this.state;
+        var isCorrectEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(email);
+        if (!isCorrectEmail) {
+            NotificationManager.error("Error message", `Email is invalid`, 2000);
         }
+        if (!firstName || !lastName || !dateOfBirth || !phone || !email || !selectedSex || !selectedRole) {
+            this.setState({ isValid: false });
+            NotificationManager.error("Error message", `All fields required`, 2000);
+        } else {
+            let body = {
+                FirstName: this.state.firstName,
+                LastName: this.state.lastName,
+                DateOfBirth: this.state.dateOfBirth,
+                Phone: this.state.phone,
+                Email: this.state.email,
+                Sex: this.state.selectedSex,
+                Role: this.state.selectedRole,
+                status: ""
+            }
 
-        fetch("api/user/create",
-            {
-                method: "POST",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                    "Authorization": window.token
-                },
-                body: JSON.stringify(body)
-            })
-            .then(response => {
-                console.log(response);
-                if (response.ok) {
-                    return response.json();
-                } else if (response.status === 401) {
-                    this.setState({
-                        status: response.statusText
-                    });
-                }
-            })
-            .then(this.setState({ redirect: true }));
+            fetch("api/user/create",
+                {
+                    method: "POST",
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json",
+                        "Authorization": window.token
+                    },
+                    body: JSON.stringify(body)
+                })
+                .then(response => {
+                    console.log(response);
+                    if (response.ok) {
+                        return response.json();
+                    } else if (response.status === 401) {
+                        this.setState({
+                            status: response.statusText
+                        });
+                    }
+                })
+                .then(this.setState({ redirect: true }));
+        }
     }
     handleCancel() {
         this.props.history.push("/user/list");
@@ -193,7 +207,7 @@ export class AddUser extends Component {
             ? <p><em>Loading...</em></p>
             : this.renderCreateForm();
         if (this.state.status === "Unauthorized") {
-	        return <div>
+            return <div>
                 <div>
                     You are {this.state.status.toLowerCase()}! Please <Link to="/account/login">login</Link> or <Link to="/account/register">register</Link> to continue :)
                 </div>
@@ -204,6 +218,7 @@ export class AddUser extends Component {
                 <h1>Create user</h1>
                 <p>Complete the following fields.</p>
                 {contents}
+                <NotificationContainer />
             </div>
         );
     }

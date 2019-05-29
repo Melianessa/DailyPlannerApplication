@@ -3,6 +3,7 @@ import "react-notifications/lib/notifications.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";
 import male from "../img/male.png";
+import female from "../img/female.png";
 
 
 export class GetUser extends Component {
@@ -96,7 +97,7 @@ export class GetUser extends Component {
                 </div>
                 <div className="col-lg-4">
                     <div className="form-group row">
-                        <img src={male} width="200" height="200" alt="User picture"/>
+                        <img src={user.sex ? male : female} width="200" height="200" alt="User picture"/>
                     </div>
 	                                </div>
 	            <div className="col-lg-4">

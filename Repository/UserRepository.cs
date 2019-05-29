@@ -15,11 +15,6 @@ namespace DailyPlanner.Repository
         {
             _context = context;
         }
-        public IEnumerable<User> GetAll()
-        {
-            return _context.Users.Include(p => p.Events).ToList();
-        }
-
         public User Get(Guid id)
         {
             var user = _context.Users.Include(e => e.Events).FirstOrDefault(u => u.Id == id);
