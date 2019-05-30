@@ -20,7 +20,7 @@ namespace DailyPlanner.Repository
         public IEnumerable<EventDTO> GetByDate(string date)
         {
             var d = DateTime.Parse(date, CultureInfo.InvariantCulture);
-            return _context.Events.Include(p => p.User).Where(p => p.StartDate.Date == d.Date).Select(p => new EventDTO(p)).ToList();
+            return _context.Events.Include(p => p.User).Where(p => p.StartDate.Date == d.Date && !p.IsDeleted).Select(p => new EventDTO(p)).ToList();
         }
 
         public Event Get(Guid id)
@@ -76,9 +76,10 @@ namespace DailyPlanner.Repository
 
         public void Delete(Event b)
         {
-            if (b != null)
+            var ev = _context.Events.Find(b.Id);
+            if (ev != null)
             {
-                _context.Events.Remove(b);
+                ev.IsDeleted = true;
             }
             _context.SaveChanges();
         }

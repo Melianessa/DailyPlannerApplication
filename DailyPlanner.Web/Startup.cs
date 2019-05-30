@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using AutoMapper;
+using DailyPlanner.DomainClasses.Models;
 using DailyPlanner.Web.Filters;
 using DailyPlanner.Web.Logger;
 using Microsoft.AspNetCore.Builder;
@@ -37,15 +38,17 @@ namespace DailyPlanner.Web
                 })
                 .AddCookie("Cookies")
                 .AddCookie("oidc");
-            services.AddAutoMapper();
             services.AddScoped<DailyPlannerExceptionFilterAttribute>();
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
             });
+            
             services.AddSwaggerGen(c =>
             {
+                c.SchemaFilter<ApplyIgnoreRelationshipsInNamespace<User>>();
+                c.SchemaFilter<ApplyIgnoreRelationshipsInNamespace<Event>>();
                 c.SwaggerDoc("v1", new Info
                 {
                     Title = "Daily Planner API",
@@ -66,7 +69,7 @@ namespace DailyPlanner.Web
             services.AddMvcCore(config =>
                 config.Filters.Add(
                     typeof(DailyPlannerExceptionFilterAttribute
-                    ))).AddApiExplorer().AddJsonFormatters()
+                    ))).AddApiExplorer().AddJsonFormatters().AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                     .AddAuthorization(opt => opt.AddPolicy("Client", policy => policy.RequireClaim("role", "Client")))
                     .AddAuthorization(opt => opt.AddPolicy("Admin", policy => policy.RequireClaim("role", "Admin"))); ;
         }

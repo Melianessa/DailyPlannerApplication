@@ -18,6 +18,7 @@ namespace DailyPlanner.DomainClasses.Models
         public DateTime EndDate { get; set; }
         public DateTime CreationDate { get; set; }
         public bool IsActive { get; set; }
+        public bool IsDeleted { get; set; }
         [Required]
         public EventEnum Type { get; set; }
         public User User { get; set; }

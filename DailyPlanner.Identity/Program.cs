@@ -18,7 +18,7 @@ namespace DailyPlanner.Identity
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+            WebHost.CreateDefaultBuilder(args).CaptureStartupErrors(true)
+                .UseStartup<Startup>().CaptureStartupErrors(true);
     }
 }

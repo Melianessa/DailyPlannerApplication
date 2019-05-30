@@ -40,7 +40,7 @@ export default class App extends Component {
                 <Route path='/account/login' component={Login} />
                 <Route path='/logout' component={Logout} />
                 <Route path='/user/info' component={GetUser} />
-                <Route path='/swagger' component={() => { window.location = '/swagger'; return null; }} />
+                <Route path='/swagger' component={() => { window.location = '/swagger';}} />
             </Layout>
 		);
 	}

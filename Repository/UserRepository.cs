@@ -51,16 +51,26 @@ namespace DailyPlanner.Repository
 
         public void Delete(User b)
         {
-            if (b != null)
+            var user = _context.Users.Include(p => p.Events).FirstOrDefault(p => p.Id.Equals(b.Id));
+            
+            if (user?.Events.Count > 0)
             {
-                _context.Users.Remove(b);
+                foreach (var ev in user.Events)
+                {
+                    ev.IsDeleted = true;
+                }
+            }
+
+            if (user != null)
+            {
+                user.IsDeleted = true;
             }
             _context.SaveChanges();
         }
 
         public IEnumerable<UserDTO> GetAllUsers()
         {
-            return _context.Users.Include(p => p.Events).Select(p => new UserDTO(p)).ToList();
+            return _context.Users.Include(p => p.Events).Where(p => !p.IsDeleted).Select(p => new UserDTO(p)).ToList();
         }
         public UserDTO GetUser(Guid id)
         {
