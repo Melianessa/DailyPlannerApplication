@@ -43,7 +43,6 @@ namespace DailyPlanner.Repository
                 user.Sex = b.Sex;
                 user.Phone = b.Phone.Trim();
                 user.Role = b.Role;
-                user.IsActive = b.IsActive;
             }
             _context.SaveChanges();
             return b;
@@ -52,7 +51,7 @@ namespace DailyPlanner.Repository
         public void Delete(User b)
         {
             var user = _context.Users.Include(p => p.Events).FirstOrDefault(p => p.Id.Equals(b.Id));
-            
+
             if (user?.Events.Count > 0)
             {
                 foreach (var ev in user.Events)

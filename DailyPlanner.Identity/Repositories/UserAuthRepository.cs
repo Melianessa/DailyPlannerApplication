@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using DailyPlanner.DomainClasses.Models;
-using DailyPlanner.Identity.Models;
 using DailyPlanner.Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +16,7 @@ namespace DailyPlanner.Identity.Repositories
         }
         public async Task Add(User user)
         {
+            user.IsActive = true;
             _dbconnection.Users.Add(user);
             await _dbconnection.SaveChangesAsync();
         }
