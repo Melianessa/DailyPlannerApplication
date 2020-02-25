@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DailyPlanner.Repository.Migrations
 {
     [DbContext(typeof(PlannerDbContext))]
-    [Migration("20190426083604_init")]
+    [Migration("20190514121650_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -32,6 +32,8 @@ namespace DailyPlanner.Repository.Migrations
 
                     b.Property<bool>("IsActive");
 
+                    b.Property<bool>("IsDeleted");
+
                     b.Property<DateTime>("StartDate");
 
                     b.Property<string>("Title")
@@ -63,7 +65,11 @@ namespace DailyPlanner.Repository.Migrations
 
                     b.Property<bool>("IsActive");
 
+                    b.Property<bool>("IsDeleted");
+
                     b.Property<string>("LastName");
+
+                    b.Property<string>("Password");
 
                     b.Property<string>("Phone");
 

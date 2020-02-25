@@ -6,6 +6,9 @@ import "../NavMenu.css";
 import "../style.css";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { staticData } from "../Context";
+import { Link } from "react-router-dom";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { NotificationContainer, NotificationManager } from "react-notifications";
 
 export class EditEvent extends Component {
     static displayName = EditEvent.name;
@@ -22,29 +25,40 @@ export class EditEvent extends Component {
             startDate: new Date(),
             endDate: new Date(),
             loading: true,
-            offset: new Date().getTimezoneOffset()
+            offset: new Date().getTimezoneOffset(),
+            status: ""
         }
         this.startPage = this.startPage.bind(this);
         this.startPage(this.props.match.params.id);
     }
     startPage(id) {
-        fetch("api/event/edit/" + id)
+        fetch("api/event/edit/" + id,
+            {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "Authorization": window.token
+                }
+            })
             .then(response => {
-                const json = response.json();
-                console.log(json);
-                return json;
+                console.log(response);
+                if (response.ok) {
+                    return response.json();
+                } else if (response.status === 401) {
+                    this.setState({
+                        status: response.statusText
+                    });
+                }
             }).then(data => {
-                console.log(data.startDate);
-                console.log(this.state.event);
-                let startMinutes = new Date(data.startDate).setMinutes(new Date(data.startDate).getMinutes() - this.state.offset);
-                let endMinutes = new Date(data.endDate).setMinutes(new Date(data.endDate).getMinutes() - this.state.offset);
-                data.startDate = new Date(startMinutes).toISOString();
-                data.endDate = new Date(endMinutes).toISOString();
-                console.log(data.startDate);
+                var event = data ? data : [];
+                let startMinutes = new Date(event.startDate).setMinutes(new Date(event.startDate).getMinutes() - this.state.offset);
+                let endMinutes = new Date(event.endDate).setMinutes(new Date(event.endDate).getMinutes() - this.state.offset);
+                event.startDate = new Date(startMinutes).toISOString();
+                event.endDate = new Date(endMinutes).toISOString();
                 this.setState({
-                    event: data, loading: false, selectedType: data.type
+                    event: event, loading: false, selectedType: event.type
                 });
-                console.log(this.state.event);
             });
     }
     handleChange(propertyName, e) {
@@ -55,35 +69,40 @@ export class EditEvent extends Component {
             event[propertyName] = e.target.value;
         }
         if (propertyName === "type") {
-            this.state.selectedType = e.target.value;
+            this.setState({ selectedType: e.target.value });
         }
         this.setState({ event: event });
     }
     handleClick(id) {
-        let body = {
-            Title: this.state.event.title,
-            Description: this.state.event.description,
-            Type: this.state.selectedType,
-            StartDate: this.state.event.startDate,
-            EndDate: this.state.event.endDate,
-            Id: this.state.event.id
+        const { title, startDate, endDate } = this.state.event;
+        const { selectedType} = this.state;
+        if (!title || selectedType==="undefined" || !startDate || !endDate) {
+            this.setState({ isValid: false });
+            NotificationManager.error("Error message", `All fields required`, 2000);
         }
-        fetch("api/event/edit/" + id,
+        else {
+            let body = {
+                Title: this.state.event.title,
+                Description: this.state.event.description,
+                Type: this.state.selectedType,
+                StartDate: this.state.event.startDate,
+                EndDate: this.state.event.endDate,
+                Id: this.state.event.id
+            }
+            fetch("api/event/edit/" + id,
                 {
                     method: "PUT",
                     headers: {
                         "Accept": "application/json",
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        "Authorization": window.token
                     },
                     body: JSON.stringify(body)
                 }).then((response) => response.json())
-            .then(data => {
-
-                console.log(data);
-                console.log(this.state.event);
-                this.setState({ event: data, redirect: true });
-                console.log(this.state.event);
-            });
+                .then(data => {
+                    this.setState({ event: data, redirect: true });
+                });
+        }
     }
     handleCancel() {
         this.props.history.push("/event/list");
@@ -97,6 +116,11 @@ export class EditEvent extends Component {
         }
     }
     renderEditForm(event) {
+        if (!event || event.length === 0) {
+            return <div>
+                Event is empty
+            </div>;
+        }
         return <div>
             <div className="form-group row">
                 <label className=" control-label col-md-12">Title:</label>
@@ -166,12 +190,26 @@ export class EditEvent extends Component {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
             : this.renderEditForm(this.state.event);
+        if (this.state.status === "Unauthorized") {
+            return <div>
+                <div>
+                    You are {this.state.status.toLowerCase()}! Please <Link to="/account/login">login</Link> or <Link to="/account/register">register</Link> to continue :)
+                </div>
+            </div>;
+        }
+        if (this.state.status === "Forbidden") {
+            return <div>
+                <div>
+                    You haven't access to this page :)
+                </div>
+            </div>;
+        }
         return (
             <div>
                 <h1>Edit event</h1>
                 <p>Edit the following fields.</p>
-
                 {contents}
+                <NotificationContainer />
             </div>
         );
     }

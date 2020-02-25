@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using DailyPlanner.DomainClasses;
 using DailyPlanner.DomainClasses.Interfaces;
 using DailyPlanner.DomainClasses.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DailyPlanner.Repository
 {
-    public class EventRepository : IDataRepository<Event>, IEventBase<Event>
+    public class EventRepository : IEventBase
     {
         private readonly PlannerDbContext _context;
 
@@ -14,18 +17,10 @@ namespace DailyPlanner.Repository
         {
             _context = context;
         }
-        public IEnumerable<Event> GetAll()
+        public IEnumerable<EventDTO> GetByDate(string date)
         {
-            return _context.Events.ToList();
-        }
-        public IEnumerable<Event> GetByDate(string date)
-        {
-            var d = DateTime.Parse(date);
-            //if (date == null)
-            //{
-            //    d = DateTime.UtcNow;
-            //}
-            return _context.Events.Where(p => p.StartDate.Date == d.Date).ToList();
+            var d = DateTime.Parse(date, CultureInfo.InvariantCulture);
+            return _context.Events.Include(p => p.User).Where(p => p.StartDate.Date == d.Date && !p.IsDeleted).Select(p => new EventDTO(p)).ToList();
         }
 
         public Event Get(Guid id)
@@ -34,14 +29,33 @@ namespace DailyPlanner.Repository
             return ev;
         }
 
-        public Guid Add(Event b)
+        public Guid Add(EventDTO ev)
         {
-            b.Id = Guid.NewGuid();
-            b.CreationDate = DateTime.UtcNow;
-            b.IsActive = true;
-            _context.Events.Add(b);
+            var evt = new Event
+            {
+                Id = Guid.NewGuid(),
+                CreationDate = DateTime.UtcNow,
+                IsActive = true,
+                Title = ev.Title,
+                Type = ev.Type,
+                Description = ev.Description,
+                StartDate = ev.StartDate,
+                EndDate = ev.EndDate,
+            };
+            var user = new User
+            {
+                Id = ev.UserId
+            };
+            _context.Users.Attach(user);
+            evt.User = user;
+            return Add(evt);
+        }
+
+        public Guid Add(Event ev)
+        {
+            _context.Events.Add(ev);
             _context.SaveChanges();
-            return b.Id;
+            return ev.Id;
         }
 
         public Event Update(Event b)
@@ -60,14 +74,14 @@ namespace DailyPlanner.Repository
             return b;
         }
 
-        public int Delete(Event b)
+        public void Delete(Event b)
         {
-            if (b != null)
+            var ev = _context.Events.Find(b.Id);
+            if (ev != null)
             {
-                _context.Events.Remove(b);
+                ev.IsDeleted = true;
             }
             _context.SaveChanges();
-            return _context.Events.Count();
         }
     }
 }

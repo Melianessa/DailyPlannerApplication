@@ -25,7 +25,7 @@
              <remarks>
              Sample request:
             
-                 POST /Todo
+                 POST 
                  {
                     "id": "1",
                     "title": "birthday",
@@ -96,7 +96,7 @@
              <remarks>
              Sample request:
             
-                 POST /Todo
+                 POST 
                  {
                     "id": 1,
                     "firstName": "Dan",

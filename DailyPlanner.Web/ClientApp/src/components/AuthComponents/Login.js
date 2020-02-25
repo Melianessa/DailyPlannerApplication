@@ -4,18 +4,24 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../NavMenu.css";
 import "../style.css";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { NotificationContainer, NotificationManager } from "react-notifications";
 
 
 export class Login extends Component {
     static displayName = Login.name;
     constructor(props) {
         super(props);
+
         this.state = {
             user: [],
             login: "",
             password: "",
-            loading: false
+            loading: false,
+            isSuccess: false,
+            redirect: false            
         }
+        this.handleClick = this.handleClick.bind(this);
     }
     handleChange(propertyName, event) {
         const user = this.state.user;
@@ -25,14 +31,54 @@ export class Login extends Component {
     handleCancel() {
         return;
     }
-    renderLoginForm() {
+    handleClick() {
+        let body = {
+            Username: this.state.user.login,
+            Password: this.state.user.password
+        }
+        fetch("api/account/login",
+            {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            }).then(response => {
+                const json = response.json();
+                return json;
+            }).then(data => {
+                if (data.token) {
+                    //TODO: add another token values
+                    localStorage.clear();
+                    let localStorageValues = [data.token];
+                    localStorage.setItem("tokenData", data.token);
+                    window.token = "Bearer " + data.token;
+                }
+                this.setState({
+                    isSuccess: data.isSuccess
+                });
+                if (this.state.isSuccess) {
+                    this.setState({ redirect: true });
+                }
+                else {
+                    NotificationManager.error("Error message", `Invalid login or/and password`, 3000);
+                }
+            });
+    }
+    renderRedirect() {
+        if (this.state.redirect) {
+            this.props.history.push("/user/list");
+        }
+    }
+    renderLoginForm(user) {
         return <div>
             <div className="form-group row">
                 <label className=" control-label col-md-12">Login:</label>
                 <div className="col-md-4">
                     <input className="form-control"
-                        type="text"
-                        value={this.state.login}
+                        type="email"
+                        value={user.login}
                         onChange={this.handleChange.bind(this, "login")} />
                 </div>
             </div>
@@ -41,7 +87,7 @@ export class Login extends Component {
                 <div className="col-md-4">
                     <input className="form-control"
                         type="password"
-                        value={this.state.password}
+                        value={user.password}
                         onChange={this.handleChange.bind(this, "password")} />
                 </div>
             </div>
@@ -49,18 +95,18 @@ export class Login extends Component {
                 <button className="btn btn-success" onClick={this.handleClick}>Login</button>
                 <button className="btn btn-danger" onClick={this.handleCancel.bind(this)}>Cancel</button>
             </div>
-
+            {this.renderRedirect()}
         </div>;
     }
     render() {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
-            : this.renderLoginForm();
+            : this.renderLoginForm(this.state.user);
         return (
             <div>
                 <h1>Login</h1>
-
                 {contents}
+                <NotificationContainer />
             </div>
         );
     }

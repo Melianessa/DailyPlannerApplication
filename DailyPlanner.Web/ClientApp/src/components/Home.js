@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
 export class Home extends Component {
     displayName = Home.name
@@ -13,7 +14,7 @@ export class Home extends Component {
                     <li><strong>Plan your weekends</strong></li>
                     <li><strong>Create and Manage Events very easy</strong></li>
                 </ul>
-                <p>The <code>ClientApp</code> subdirectory is a standard React application based on the <code>create-react-app</code> template. If you open a command prompt in that directory, you can run <code>npm</code> commands such as <code>npm test</code> or <code>npm install</code>.</p>
+                <p> Please <Link to="/account/login">login</Link> or <Link to="/account/register">register</Link> to see your events :)</p>
             </div>
         );
     }

@@ -6,6 +6,10 @@ import "../NavMenu.css";
 import "../style.css";
 import { staticData } from "../Context";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import { Link } from "react-router-dom";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { NotificationContainer, NotificationManager } from "react-notifications";
+
 
 export class EditUser extends Component {
     static displayName = EditUser.name;
@@ -25,7 +29,8 @@ export class EditUser extends Component {
             selectedRole: null,
             selectedSex: null,
             redirect: false,
-            loading: true
+            loading: true,
+            status: ""
         }
 
         this.handleClick = this.handleClick.bind(this);
@@ -33,18 +38,29 @@ export class EditUser extends Component {
         this.startPage(this.props.match.params.id);
     }
     startPage(id) {
-        fetch("api/user/edit/" + id)
+        fetch("api/user/edit/" + id,
+            {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "Authorization": window.token
+                }
+            })
             .then(response => {
-                const json = response.json();
-                console.log(json);
-                return json;
+                console.log(response);
+                if (response.ok) {
+                    return response.json();
+                } else if (response.status === 401) {
+                    this.setState({
+                        status: response.statusText
+                    });
+                }
             }).then(data => {
-                console.log(data);
-                console.log(this.state.user);
+                var user = data ? data : [];
                 this.setState({
-                    user: data, loading: false, selectedRole: data.role, selectedSex: data.sex
+                    user: user, loading: false, selectedRole: user.role, selectedSex: user.sex
                 });
-                console.log(this.state.event);
             });
     }
     handleChange(propertyName, event) {
@@ -55,38 +71,60 @@ export class EditUser extends Component {
             user[propertyName] = event.target.value;
         }
         if (propertyName === "sex") {
-            this.state.selectedSex = event.target.value;
+            this.setState({ selectedSex: event.target.value });
         }
         if (propertyName === "role") {
-            this.state.selectedRole = event.target.value;
+            this.setState({ selectedRole: event.target.value });
         }
         this.setState({ user: user });
     }
     handleClick(id) {
-        let body = {
-            FirstName: this.state.user.firstName,
-            LastName: this.state.user.lastName,
-            DateOfBirth: this.state.user.dateOfBirth,
-            Phone: this.state.user.phone,
-            Email: this.state.user.email,
-            Sex: this.state.selectedSex,
-            Role: this.state.selectedRole,
-            Id: this.state.user.id
+        const { firstName, lastName, dateOfBirth, phone, email } = this.state.user;
+        const { selectedSex, selectedRole } = this.state;
+        var isCorrectEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(email);
+        if (!isCorrectEmail) {
+            NotificationManager.error("Error message", `Email is invalid`, 2000);
         }
-        fetch("api/user/edit/" + id,
-            {
-                method: "PUT",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(body)
-            }).then((response) => response.json())
-            .then(data => {
-                console.log(data);
-                console.log(this.state.user);
-                this.setState({ user: data, redirect: true });
-            });
+        if (!firstName || !lastName || !dateOfBirth || !phone || !email || selectedSex !== true && selectedSex !== false || selectedRole==="undefined") {
+            this.setState({ isValid: false });
+            NotificationManager.error("Error message", `All fields must be filled`, 2000);
+        }
+        else {
+            let body = {
+                FirstName: this.state.user.firstName,
+                LastName: this.state.user.lastName,
+                DateOfBirth: this.state.user.dateOfBirth,
+                Phone: this.state.user.phone,
+                Email: this.state.user.email,
+                Sex: this.state.selectedSex,
+                Role: this.state.selectedRole,
+                Id: this.state.user.id
+            }
+            fetch("api/user/edit/" + id,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json",
+                        "Authorization": window.token
+                    },
+                    body: JSON.stringify(body)
+                }).then(response => {
+                    console.log(response);
+                    if (response.ok) {
+                        return response.json();
+                    } else if (response.status === 401) {
+                        this.setState({
+                            status: response.statusText
+                        });
+                    }
+                })
+                .then(data => {
+                    var user = data ? data : [];
+                    this.setState({ user: user, redirect: true });
+                });
+        }
+
     }
     handleCancel() {
         this.props.history.push("/user/list");
@@ -100,6 +138,11 @@ export class EditUser extends Component {
         }
     }
     renderEditForm(user) {
+        if (!user || user.length === 0) {
+            return <div>
+                User is empty
+            </div>;
+        }
         return <div>
             <div className="form-group row">
                 <label className=" control-label col-md-12">First Name:</label>
@@ -186,12 +229,19 @@ export class EditUser extends Component {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
             : this.renderEditForm(this.state.user);
+        if (this.state.status === "Unauthorized") {
+            return <div>
+                <div>
+                    You are {this.state.status.toLowerCase()}! Please <Link to="/account/login">login</Link> or <Link to="/account/register">register</Link> to continue :)
+                </div>
+            </div>;
+        }
         return (
             <div>
                 <h1>Edit user</h1>
                 <p>Edit the following fields.</p>
-
                 {contents}
+                <NotificationContainer />
             </div>
         );
     }

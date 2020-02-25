@@ -1,6 +1,5 @@
 ﻿import React, { Component } from "react";
 import { NavLink } from "reactstrap";
-import { Router, Route } from "react-router";
 import { Link } from "react-router-dom";
 import "../NavMenu.css";
 import "../style.css";
@@ -17,7 +16,7 @@ export class EventList extends Component {
     constructor(props) {
         super(props);
         let date = new Date();
-        this.state = { events: [], loading: true, selectedDay: date, offset: new Date().getTimezoneOffset() };
+        this.state = { events: [], loading: true, selectedDay: date, offset: new Date().getTimezoneOffset(), status: "" };
         this.handleDelete = this.handleDelete.bind(this);
         this.helperDelete = this.helperDelete.bind(this);
         this.handleDayClick = this.handleDayClick.bind(this);
@@ -32,30 +31,37 @@ export class EventList extends Component {
                 //"Accept": "application/json",
                 //application/x-www-form-urlencoded for methods without [FromBody]
                 //application/json for methods with [FromBody]
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": window.token
             },
             body: new URLSearchParams(reqBody).toString()
         }).then(response => {
-            const json = response.json();
-            console.log(json);
-            return json;
+            console.log(response);
+            if (response.ok) {
+                return response.json();
+            } else if (response.status === 401) {
+                this.setState({
+                    status: response.statusText
+                });
+            }
         }).then(data => {
+            var events = data ? data : [];
             this.handleDayClick(day);
-            for (var i = 0; i < data.length; i++) {
-                let startMinutes = new Date(data[i].startDate).setMinutes(new Date(data[i].startDate).getMinutes() -
+            for (var i = 0; i < events.length; i++) {
+                let startMinutes = new Date(events[i].startDate).setMinutes(new Date(events[i].startDate).getMinutes() -
                     this.state.offset);
-                let endMinutes = new Date(data[i].endDate).setMinutes(new Date(data[i].endDate).getMinutes() -
+                let endMinutes = new Date(events[i].endDate).setMinutes(new Date(events[i].endDate).getMinutes() -
                     this.state.offset);
-                data[i].startDate = new Date(startMinutes).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-                data[i].endDate = new Date(endMinutes).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+                events[i].startDate = new Date(startMinutes).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+                events[i].endDate = new Date(endMinutes).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
             }
             this.setState({
-                events: data, loading: false
+                events: events, loading: false
             });
             if (this.props.location.state && this.props.location.state.actionMessage) {
-                NotificationManager.success("Success message", `Event successfully ${this.props.location.state.actionMessage}!`, 3000, () => {
-                    this.props.location.state.actionMessage = null;
-                });
+                NotificationManager.success("Success message", `Event successfully ${this.props.location.state.actionMessage}!`, 3000);
+                this.props.location.state.actionMessage = null;
+                console.log(this.props.location);
             }
         });
 
@@ -67,13 +73,31 @@ export class EventList extends Component {
     helperDelete(id) {
         fetch("api/event/delete/" + id,
             {
-                method: "DELETE"
+                method: "DELETE",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "Authorization": window.token
+                }
             })
             .then(this.setState({
                 events: this.state.events.filter((rec) => {
                     return (rec.id !== id);
                 })
-            }));
+            }))
+            .then(response => {
+                console.log(response);
+                if (response.ok) {
+                    if (response.status === 200) {
+                        NotificationManager.success("Success message", `Event successfully deleted!`, 3000);
+                    }
+                    return response.json();
+                } else if (response.status === 401) {
+                    this.setState({
+                        status: response.statusText
+                    });
+                }
+            });
     }
 
     handleDelete(id) {
@@ -99,6 +123,19 @@ export class EventList extends Component {
 
     }
     renderEvent(events) {
+        if (!events || events.length === 0) {
+            return <table className="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date: <DatePicker onChange={this.handleGetAll} selected={this.state.selectedDay} /></th>
+                        <th>Event</th>
+                    </tr>
+                </thead>
+                <div>
+                    There is no events to this date
+                </div>
+            </table>;
+        }
         return (
             <table className="table table-striped">
                 <thead>
@@ -117,7 +154,7 @@ export class EventList extends Component {
                             <td className="event-date-header">
                                 <div>{ev.title}</div>
                                 <div>{ev.description}</div>
-                                
+
                             </td>
                             <td>
                                 <button className="btn btn-warning" onClick={() => this.handleEdit(ev.id)}>Edit</button>
@@ -134,7 +171,20 @@ export class EventList extends Component {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
             : this.renderEvent(this.state.events);
-
+        if (this.state.status === "Unauthorized") {
+            return <div>
+                <div>
+                    You are {this.state.status.toLowerCase()}! Please <Link to="/account/login">login</Link> or <Link to="/account/register">register</Link> to continue :)
+                </div>
+            </div>;
+        }
+        if (this.state.status === "Forbidden") {
+            return <div>
+                <div>
+                    You haven't access to this page :)
+                </div>
+            </div>;
+        }
         return (
             <div>
                 <h1>Events list</h1>

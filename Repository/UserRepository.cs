@@ -11,16 +11,10 @@ namespace DailyPlanner.Repository
     public class UserRepository : IUserRepository
     {
         private readonly PlannerDbContext _context;
-
         public UserRepository(PlannerDbContext context)
         {
             _context = context;
         }
-        public IEnumerable<User> GetAll()
-        {
-            return _context.Users.Include(p => p.Events).ToList();
-        }
-
         public User Get(Guid id)
         {
             var user = _context.Users.Include(e => e.Events).FirstOrDefault(u => u.Id == id);
@@ -42,32 +36,40 @@ namespace DailyPlanner.Repository
             var user = _context.Users.Find(b.Id);
             if (user != null)
             {
-                user.FirstName = b.FirstName;
-                user.LastName = b.LastName;
+                user.FirstName = b.FirstName.Trim();
+                user.LastName = b.LastName.Trim();
                 user.DateOfBirth = b.DateOfBirth;
-                user.Email = b.Email;
+                user.Email = b.Email.Trim();
                 user.Sex = b.Sex;
-                user.Phone = b.Phone;
+                user.Phone = b.Phone.Trim();
                 user.Role = b.Role;
-                user.IsActive = b.IsActive;
             }
             _context.SaveChanges();
             return b;
         }
 
-        public int Delete(User b)
+        public void Delete(User b)
         {
-            if (b != null)
+            var user = _context.Users.Include(p => p.Events).FirstOrDefault(p => p.Id.Equals(b.Id));
+
+            if (user?.Events.Count > 0)
             {
-                _context.Users.Remove(b);
+                foreach (var ev in user.Events)
+                {
+                    ev.IsDeleted = true;
+                }
+            }
+
+            if (user != null)
+            {
+                user.IsDeleted = true;
             }
             _context.SaveChanges();
-            return _context.Users.Count();
         }
-        
+
         public IEnumerable<UserDTO> GetAllUsers()
         {
-            return _context.Users.Include(p => p.Events).Select(p => new UserDTO(p)).ToList();
+            return _context.Users.Include(p => p.Events).Where(p => !p.IsDeleted).Select(p => new UserDTO(p)).ToList();
         }
         public UserDTO GetUser(Guid id)
         {

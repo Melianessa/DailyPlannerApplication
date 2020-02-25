@@ -43,7 +43,7 @@ namespace DailyPlanner.Test
         {
             var controller = new UserController(_userRepository);
             //Act  
-            var data = controller.GetAll().OrderBy(p => p.FirstName).ToList();
+            var data = controller.GetAllUsers().OrderBy(p => p.FirstName).ToList();
             //Assert  
             Assert.AreEqual(data[0].FirstName, users[0].FirstName);
         }
@@ -51,11 +51,12 @@ namespace DailyPlanner.Test
         public void AddUser_Test()
         {
             var controller = new UserController(_userRepository);
-            User newUser = new User() { Id = Guid.NewGuid(), FirstName = "Mary", LastName = "Lane", DateOfBirth = new DateTime(1991, 08, 12), Email = "mary@r.ua", Phone = "7777777", Role = RoleEnum.Admin, Sex = false };
+            User newUser = new User() { FirstName = "Mary", LastName = "Lane", DateOfBirth = new DateTime(1991, 08, 12), Email = "mary@r.ua", Phone = "7777777", Role = RoleEnum.Admin, Sex = false };
             //Act  
-            var data = controller.Post(newUser);
+            var userId = controller.Post(newUser);
+            var user = _userRepository.Get(userId);
             //Assert  
-            Assert.AreEqual(data, newUser.Id);
+            Assert.AreEqual(user.LastName, newUser.LastName);
         }
         [TestMethod]
         public void GetUser_Test()
@@ -83,9 +84,10 @@ namespace DailyPlanner.Test
             var controller = new UserController(_userRepository);
             var firstLength = users.Length;
             //Act
-            var result = controller.Delete(users[0]);
+            controller.Delete(users[0]);
+            var secondLength = controller.GetAllUsers().Count();
             //Assert
-            Assert.AreNotEqual(firstLength, result);
+            Assert.AreNotEqual(firstLength, secondLength);
         }
     };
 }

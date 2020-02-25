@@ -13,24 +13,38 @@ export class UserList extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { users: [], loading: true, activePage: 1, itemsPerPage: 3 };
+        this.state = { users: [], loading: true, activePage: 1, itemsPerPage: 3, status: "" };
         this.handleDelete = this.handleDelete.bind(this);
         this.helperDelete = this.helperDelete.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
         this.renderUser = this.renderUser.bind(this);
-        fetch("api/user/getAllUsers")
+        fetch("api/user/getAllUsers",
+            {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "Authorization": window.token
+                }
+            })
             .then(response => {
-                const json = response.json();
-                return json;
+                console.log(response);
+                if (response.ok) {
+                    return response.json();
+                } else if (response.status === 401) {
+                    this.setState({
+                        status: response.statusText
+                    });
+                }
             }).then(data => {
+                var users = data ? data : [];
                 this.setState({
-                    users: data, loading: false
+                    users: users, loading: false
                 });
                 console.log(this.props.location);
                 if (this.props.location.state && this.props.location.state.actionMessage) {
-                    NotificationManager.success("Success message", `User successfully ${this.props.location.state.actionMessage}!`, 3000, () => {
-                        this.props.location.state.actionMessage = null;
-                    });
+                    NotificationManager.success("Success message", `User successfully ${this.props.location.state.actionMessage}!`, 3000);
+                    this.props.location.state.actionMessage = null;
                     console.log(this.props.location);
                 }
             });
@@ -42,13 +56,32 @@ export class UserList extends Component {
     helperDelete(id) {
         fetch("api/user/delete/" + id,
             {
-                method: "DELETE"
+                method: "DELETE",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "Authorization": window.token
+                }
+            })
+            .then(response => {
+                console.log(response);
+                if (response.ok) {
+                    if (response.status === 200) {
+                        NotificationManager.success("Success message", `User successfully deleted!`, 3000);
+                    }
+                    return response.json();
+                } else if (response.status === 401) {
+                    this.setState({
+                        status: response.statusText
+                    });
+                }
             })
             .then(this.setState({
                 users: this.state.users.filter((rec) => {
                     return (rec.id !== id);
                 })
-            }));
+            }))
+            ;
     }
 
     handleDelete(id) {
@@ -73,6 +106,12 @@ export class UserList extends Component {
         this.props.history.push("/user/edit/" + id);
     }
     renderUser(users) {
+
+        if (!users || users.length === 0) {
+            return <div>
+                User list is empty
+            </div>;
+        }
         return (
             <table className="table table-striped">
                 <thead>
@@ -121,7 +160,14 @@ export class UserList extends Component {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
             : this.renderUser(this.state.users, this.state.itemsPerPage);
+        if (this.state.status === "Unauthorized") {
+            return <div>
+                <div>
+                    You are {this.state.status.toLowerCase()}! Please <Link to="/account/login">login</Link> or <Link to="/account/register">register</Link> to continue :)
+                </div>
+            </div>;
 
+        }
         return (
             <div>
                 <h1>Users list</h1>

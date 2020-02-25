@@ -1,9 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using DailyPlanner.DomainClasses.Models;
+using System;
+using System.Collections.Generic;
 
 namespace DailyPlanner.DomainClasses.Interfaces
 {
-    public interface IEventBase<TEntity> where TEntity:class
+    public interface IEventBase: IDataRepository<Event>
     {
-        IEnumerable<TEntity> GetByDate(string date);
+        IEnumerable<EventDTO> GetByDate(string date);
+        Guid Add(EventDTO ev);
+
     }
 }

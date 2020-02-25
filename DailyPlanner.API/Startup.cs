@@ -1,4 +1,5 @@
 ﻿using System;
+using DailyPlanner.DomainClasses;
 using DailyPlanner.DomainClasses.Interfaces;
 using DailyPlanner.DomainClasses.Models;
 using DailyPlanner.Repository;
@@ -20,20 +21,32 @@ namespace DailyPlanner.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            services.AddAuthentication("Bearer")
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = Configuration["Url:Identity"];
+                    options.RequireHttpsMetadata = false;
+                    options.ApiName = "DailyPlanner.API";
+                });
             services.AddScoped<IDataRepository<User>, UserRepository>();
             services.AddScoped<IDataRepository<Event>, EventRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IEventBase<Event>, EventRepository>();
+            services.AddScoped<IEventBase, EventRepository>();
             services.AddScoped<DbContext, PlannerDbContext>();
             services.AddDbContext<PlannerDbContext>(opts =>
                 opts.UseSqlServer(Configuration["ConnectionString:DailyPlannerDB"]));
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvcCore().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonFormatters()
+                .AddAuthorization(
+                opt => opt.AddPolicy("Client", policy => policy.RequireClaim("Role", "Client"
+                   )))
+                .AddAuthorization(
+                opt => opt.AddPolicy("Admin", policy => policy.RequireClaim("Role", "Admin"
+                   )));
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -46,19 +59,11 @@ namespace DailyPlanner.API
             }
 
             app.UseHttpsRedirection();
-            try
-            {
-                app.UseMvc(routes =>
+            app.UseAuthentication();
+            app.UseMvc(routes =>
             {
                 routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-
         }
     }
 }

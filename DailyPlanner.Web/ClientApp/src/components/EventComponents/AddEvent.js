@@ -3,6 +3,9 @@ import "react-notifications/lib/notifications.css";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import { staticData } from "../Context";
+import { Link } from "react-router-dom";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { NotificationContainer, NotificationManager } from "react-notifications";
 
 export class AddEvent extends Component {
     constructor(props) {
@@ -44,30 +47,44 @@ export class AddEvent extends Component {
         console.log(e.target.value);
     }
     handleClick() {
-        let body = {
-            Title: this.state.title,
-            Description: this.state.description,
-            Type: this.state.selectedType,
-            StartDate: this.state.startDate,
-            EndDate: this.state.endDate
+        const { title, selectedType, startDate, endDate } = this.state;
+        if (!title || !selectedType || !startDate || !endDate) {
+            this.setState({ isValid: false });
+            NotificationManager.error("Error message", `All fields required`, 2000);
         }
-        //this.setState({ redirect: true });
-        //setTimeout(() => {
-        //    this.setState({ redirect: true })}, 2000);
-        fetch("api/event/create",
-            {
-                method: "POST",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(body)
-            })//.then(NotificationManager.success('Success message', 'Event successfully added!', 3000))
-	        .then(this.setState({ redirect: true }));
+        else {
+            let body = {
+                Title: this.state.title,
+                Description: this.state.description,
+                Type: this.state.selectedType,
+                StartDate: this.state.startDate,
+                EndDate: this.state.endDate
+            }
 
+            fetch("api/event/create",
+                {
+                    method: "POST",
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json",
+                        "Authorization": window.token
+                    },
+                    body: JSON.stringify(body)
+                })
+                .then(response => {
+                    console.log(response);
+                    if (response.ok) {
+                        return response.json();
+                    } else if (response.status === 401) {
+                        this.setState({
+                            status: response.statusText
+                        });
+                    }
+                }).then(this.setState({ redirect: true }));
+        }
     }
     handleCancel() {
-	    this.props.history.push("/event/list");
+        this.props.history.push("/event/list");
     }
     renderRedirect() {
         if (this.state.redirect) {
@@ -141,7 +158,7 @@ export class AddEvent extends Component {
             </div>
             <div className="form-group">
                 <button className="btn btn-success" onClick={this.handleClick.bind(this)}>Save event</button>
-	            <button className="btn btn-danger" onClick={this.handleCancel.bind(this)}>Cancel</button>
+                <button className="btn btn-danger" onClick={this.handleCancel.bind(this)}>Cancel</button>
             </div>
             {this.renderRedirect()}
         </div>;
@@ -150,13 +167,26 @@ export class AddEvent extends Component {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
             : this.renderCreateForm();
-
+        if (this.state.status === "Unauthorized") {
+            return <div>
+                <div>
+                    You are {this.state.status.toLowerCase()}! Please <Link to="/account/login">login</Link> or <Link to="/account/register">register</Link> to continue :)
+                </div>
+            </div>;
+        }
+        if (this.state.status === "Forbidden") {
+            return <div>
+                <div>
+                    You haven't access to this page :)
+                </div>
+            </div>;
+        }
         return (
             <div>
                 <h1>Create event</h1>
                 <p>Complete the following fields.</p>
-
                 {contents}
+                <NotificationContainer />
             </div>
         );
 

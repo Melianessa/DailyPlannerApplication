@@ -2,12 +2,12 @@ using System;
 using System.IO;
 using System.Reflection;
 using AutoMapper;
+using DailyPlanner.DomainClasses.Models;
 using DailyPlanner.Web.Filters;
 using DailyPlanner.Web.Logger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
@@ -26,19 +26,29 @@ namespace DailyPlanner.Web
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAutoMapper();
+            System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            services.AddAuthentication("Bearer")
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = Configuration["Url:Identity"];
+                    options.RequireHttpsMetadata = false;
+                    options.ApiName = "DailyPlanner.Web";
+                })
+                .AddCookie("Cookies")
+                .AddCookie("oidc");
             services.AddScoped<DailyPlannerExceptionFilterAttribute>();
-            services.AddMvc(config => config.Filters.Add(typeof(DailyPlannerExceptionFilterAttribute))).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
             });
+            
             services.AddSwaggerGen(c =>
             {
+                c.SchemaFilter<ApplyIgnoreRelationshipsInNamespace<User>>();
+                c.SchemaFilter<ApplyIgnoreRelationshipsInNamespace<Event>>();
                 c.SwaggerDoc("v1", new Info
                 {
                     Title = "Daily Planner API",
@@ -56,9 +66,14 @@ namespace DailyPlanner.Web
                 //... and tell Swagger to use those XML comments.
                 c.IncludeXmlComments(xmlPath);
             });
+            services.AddMvcCore(config =>
+                config.Filters.Add(
+                    typeof(DailyPlannerExceptionFilterAttribute
+                    ))).AddApiExplorer().AddJsonFormatters().AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
+                    .AddAuthorization(opt => opt.AddPolicy("Client", policy => policy.RequireClaim("role", "Client")))
+                    .AddAuthorization(opt => opt.AddPolicy("Admin", policy => policy.RequireClaim("role", "Admin"))); ;
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             File.WriteAllText((Path.Combine(Directory.GetCurrentDirectory(), "logger.txt")), String.Empty);
@@ -80,13 +95,7 @@ namespace DailyPlanner.Web
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseSpaStaticFiles();
-
-            //app.UseMvc(routes =>
-            //{
-            //    routes.MapRoute(
-            //        name: "default",
-            //        template: "{controller}/{action=Index}/{id?}");
-            //});
+            app.UseAuthentication();
             app.UseMvc();
             app.UseSpa(spa =>
             {
